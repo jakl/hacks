@@ -1,10 +1,10 @@
 
-import java.awt.Color;
+//import java.awt.Color;
 
 public class Shirt extends Product {
   private int size;
   private int price;
-  private Color color;
+  //private Color color;
 
   public Shirt() {this("");}
   

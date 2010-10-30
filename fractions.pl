@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 use strict;
 use warnings;
 use subs qw(gcd lcm reduce commondenom);
