@@ -1,0 +1,74 @@
+NAME
+  Sample
+
+AUTHOR
+  Written by James Koval
+
+Usage
+  java -cp .:sqlitejdbc-v056.jar CLInterface
+
+  new UserName ItemName ClassName
+    create a new product
+    named ItemName
+    owned by UserName
+    of type ClassName which inherits from Product.class
+  ls
+    list all products
+  save fileName
+    save products to a sqlite db file
+    named fileName
+  load fileName
+    load products from a sqlite db file
+    named fileName
+
+FILES
+  Product
+    Parent class of all database items
+  CLInterface
+    Main runnable class granting a CLI
+  ProductHandler
+    Maintains products in memory
+  SqliteHandler
+    Maintains products on disk in sqlite files
+  Car, Pants, Shirt, Shoes
+    Example items that inherit from Product
+  MethCmp, ProCmp
+    Comparators that sort methods and products alphabetically
+  sqlitejdbc-v056.jar
+    BSD licensed JDBC driver for SQLite from zentus.com/sqlitejdbc
+
+INFO
+
+  Works with java reflections to create a database of products, saved in memory as a hash table of arrays and to disk as a sqlite file. Valid products are any class that inherits from Product.class in the project's folder. These class files may be dropped-in while the program is running. In-memory, a user owns an array of products which are guaranteed to have unique names.
+
+  The in-memory datastructure:
+    UserName1 => [Product1, Product2, Product3]
+    UserName2 => [Product1, Product2, ProductN]
+
+  Each time a product's attribute is entered, a default value is saved for attributes of that name for that user, and following attributes will default to the saved value on command.
+
+EXAMPLE CLI INPUT
+
+java -cp .:sqlitejdbc-v056.jar CLInterface
+new Jane FirstCar Car
+Toyota
+4
+7885.99
+ls
+new Jane SecondCar Car
+y
+n
+two
+2
+n
+10000
+new Rob BlackSlacks Pants
+30
+40
+32
+ls
+save sql.db
+^D         #The ctrl+d key combo will exit the program
+java -cp .:sqlitejdbc-v056.jar CLInterface
+load sql.db
+ls
