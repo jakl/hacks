@@ -1,5 +1,18 @@
 #!/usr/bin/perl 
-#use warnings; #there is a warning in the Net::Telnet::Cisco libary
+
+#Takes one argument of a file name.
+#Opens the file and processes each line,
+#outputting the cisco router config after each line
+#The file should have "ip user pass" on each line and look like this
+#10.10.10.10 JoeUser pa$$\/
+#11.10.10.10 JoeUser2 pa$\/\/0Rd
+#12.10.10.10 JoeUser3 pa$$\/\/0Rd
+#13.10.10.10 Joser pa$$\\/0Rd
+#14.10.10.10 JoeUser99 pa$$\/\/0Rd
+#15.10.10.10 oeUser p\/0Rd
+
+
+#use warnings; #there is a warning in the Net::Telnet::Cisco library
 use strict;
 use Net::Telnet::Cisco;
 
