@@ -46,15 +46,15 @@
           this.lexbtn = new System.Windows.Forms.Button();
           this.getcharbtn = new System.Windows.Forms.Button();
           this.commentcheck = new System.Windows.Forms.CheckBox();
-          this.symbolsbtn = new System.Windows.Forms.Button();
-          this.symbolstab = new System.Windows.Forms.TabPage();
-          this.symbolbox = new System.Windows.Forms.RichTextBox();
+          this.assemblytab = new System.Windows.Forms.TabPage();
+          this.assemblybox = new System.Windows.Forms.RichTextBox();
+          this.parsebtn = new System.Windows.Forms.Button();
           this.tabs.SuspendLayout();
           this.tokenstab.SuspendLayout();
           this.chartab.SuspendLayout();
           this.errorstab.SuspendLayout();
           this.notetab.SuspendLayout();
-          this.symbolstab.SuspendLayout();
+          this.assemblytab.SuspendLayout();
           this.SuspendLayout();
           // 
           // codebox
@@ -114,7 +114,7 @@
           // 
           this.tabs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                       | System.Windows.Forms.AnchorStyles.Right)));
-          this.tabs.Controls.Add(this.symbolstab);
+          this.tabs.Controls.Add(this.assemblytab);
           this.tabs.Controls.Add(this.tokenstab);
           this.tabs.Controls.Add(this.chartab);
           this.tabs.Controls.Add(this.errorstab);
@@ -215,7 +215,7 @@
           // lexbtn
           // 
           this.lexbtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.lexbtn.Location = new System.Drawing.Point(636, 12);
+          this.lexbtn.Location = new System.Drawing.Point(591, 12);
           this.lexbtn.Name = "lexbtn";
           this.lexbtn.Size = new System.Drawing.Size(59, 44);
           this.lexbtn.TabIndex = 6;
@@ -226,7 +226,7 @@
           // getcharbtn
           // 
           this.getcharbtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.getcharbtn.Location = new System.Drawing.Point(571, 12);
+          this.getcharbtn.Location = new System.Drawing.Point(526, 12);
           this.getcharbtn.Name = "getcharbtn";
           this.getcharbtn.Size = new System.Drawing.Size(59, 44);
           this.getcharbtn.TabIndex = 7;
@@ -237,52 +237,48 @@
           // commentcheck
           // 
           this.commentcheck.AutoSize = true;
-          this.commentcheck.Location = new System.Drawing.Point(374, 12);
+          this.commentcheck.Location = new System.Drawing.Point(656, 12);
           this.commentcheck.Name = "commentcheck";
           this.commentcheck.Size = new System.Drawing.Size(75, 17);
           this.commentcheck.TabIndex = 10;
           this.commentcheck.Text = "Comments";
           this.commentcheck.UseVisualStyleBackColor = true;
           // 
-          // symbolsbtn
+          // assemblytab
           // 
-          this.symbolsbtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.symbolsbtn.Location = new System.Drawing.Point(506, 12);
-          this.symbolsbtn.Name = "symbolsbtn";
-          this.symbolsbtn.Size = new System.Drawing.Size(59, 44);
-          this.symbolsbtn.TabIndex = 11;
-          this.symbolsbtn.Text = "Test Symbols";
-          this.symbolsbtn.UseVisualStyleBackColor = true;
-          this.symbolsbtn.Click += new System.EventHandler(this.symbolsbtn_Click);
+          this.assemblytab.Controls.Add(this.assemblybox);
+          this.assemblytab.Location = new System.Drawing.Point(4, 22);
+          this.assemblytab.Name = "assemblytab";
+          this.assemblytab.Size = new System.Drawing.Size(711, 209);
+          this.assemblytab.TabIndex = 4;
+          this.assemblytab.Text = "Assembly";
+          this.assemblytab.UseVisualStyleBackColor = true;
           // 
-          // symbolstab
+          // assemblybox
           // 
-          this.symbolstab.Controls.Add(this.symbolbox);
-          this.symbolstab.Location = new System.Drawing.Point(4, 22);
-          this.symbolstab.Name = "symbolstab";
-          this.symbolstab.Size = new System.Drawing.Size(711, 209);
-          this.symbolstab.TabIndex = 4;
-          this.symbolstab.Text = "Symbols";
-          this.symbolstab.UseVisualStyleBackColor = true;
+          this.assemblybox.Location = new System.Drawing.Point(3, 3);
+          this.assemblybox.Name = "assemblybox";
+          this.assemblybox.Size = new System.Drawing.Size(707, 205);
+          this.assemblybox.TabIndex = 0;
+          this.assemblybox.Text = "";
           // 
-          // symbolbox
+          // parsebtn
           // 
-          this.symbolbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                      | System.Windows.Forms.AnchorStyles.Right)));
-          this.symbolbox.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-          this.symbolbox.Location = new System.Drawing.Point(6, 6);
-          this.symbolbox.Name = "symbolbox";
-          this.symbolbox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-          this.symbolbox.Size = new System.Drawing.Size(699, 197);
-          this.symbolbox.TabIndex = 1;
-          this.symbolbox.Text = resources.GetString("symbolbox.Text");
+          this.parsebtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+          this.parsebtn.Location = new System.Drawing.Point(461, 12);
+          this.parsebtn.Name = "parsebtn";
+          this.parsebtn.Size = new System.Drawing.Size(59, 44);
+          this.parsebtn.TabIndex = 11;
+          this.parsebtn.Text = "Parse";
+          this.parsebtn.UseVisualStyleBackColor = true;
+          this.parsebtn.Click += new System.EventHandler(this.parsebtn_Click);
           // 
           // form
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
           this.ClientSize = new System.Drawing.Size(743, 601);
-          this.Controls.Add(this.symbolsbtn);
+          this.Controls.Add(this.parsebtn);
           this.Controls.Add(this.commentcheck);
           this.Controls.Add(this.getcharbtn);
           this.Controls.Add(this.lexbtn);
@@ -300,7 +296,7 @@
           this.chartab.ResumeLayout(false);
           this.errorstab.ResumeLayout(false);
           this.notetab.ResumeLayout(false);
-          this.symbolstab.ResumeLayout(false);
+          this.assemblytab.ResumeLayout(false);
           this.ResumeLayout(false);
           this.PerformLayout();
 
@@ -325,9 +321,9 @@
         private System.Windows.Forms.TabPage notetab;
         private System.Windows.Forms.RichTextBox notebox;
         private System.Windows.Forms.CheckBox commentcheck;
-        private System.Windows.Forms.Button symbolsbtn;
-        private System.Windows.Forms.TabPage symbolstab;
-        private System.Windows.Forms.RichTextBox symbolbox;
+        private System.Windows.Forms.TabPage assemblytab;
+        private System.Windows.Forms.RichTextBox assemblybox;
+        private System.Windows.Forms.Button parsebtn;
     }
 }
 

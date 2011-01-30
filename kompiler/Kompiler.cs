@@ -94,8 +94,9 @@ namespace kompiler {
     }
 
     private void lexbtn_Click(object sender, EventArgs e) {
-      facade.comments = commentcheck.Checked;
-      tokensbox.Text = facade.getTokens(codebox.Text);
+      facade.m_comments = commentcheck.Checked;
+      facade.lex(codebox.Text);
+      tokensbox.Text = facade.TokenDump;
       errorbox.Text = facade.Errors;
     }
 
@@ -111,9 +112,8 @@ namespace kompiler {
     /// Save the contents of codebox to m_filePath
     /// </summary>
     private void saveCodeboxToPath() {
-      using (StreamWriter sw = new StreamWriter(m_filePath)) {
+      using (StreamWriter sw = new StreamWriter(m_filePath))
         sw.Write(codebox.Text);
-      }
     }
 
     private void newbtn_Click(object sender, EventArgs e) {
@@ -122,27 +122,14 @@ namespace kompiler {
       m_getCharIndex = 0;
     }
 
-    private void symbolsbtn_Click(object sender, EventArgs e) {
-      Symbols s = Symbols.GetSymbols();
-      s.initCategory(Attribute.ID_CAT.VAR);
-      s.add("x");
-      s.add("y");
-      s.commit(Attribute.VAR_TYPE.INTEGER);
-      s.setVal("x", 42);
-      s.setVal("y", 443);
-      s.nest();
-      s.setVal("y", 22);
-      s.initCategory(Attribute.ID_CAT.CONST);
-      s.add("x", "twenty one");
-      s.commit(Attribute.VAR_TYPE.STRING);
-      s.nest();
-      s.initCategory(Attribute.ID_CAT.PROC);
-      s.add("tempscope");
-      s.commit(Attribute.VAR_TYPE.REAL);
-      s.setVal("tempscope", "going to evaporate on unnest");
-      s.unnest();
-      s.setVal("x", "fourty two");
-      symbolbox.Text = s.ToString();
+    private void parsebtn_Click(object sender, EventArgs e) {
+      if(m_filePath == null)
+        facade.parse(codebox.Text, "unnamed");
+      else
+        facade.parse(codebox.Text, Path.GetFileNameWithoutExtension(m_filePath));
+      tokensbox.Text = facade.TokenDump;
+      errorbox.Text = facade.Errors;
+      assemblybox.Text = facade.AssemblyDump;//Make the main procedure viewable
     }
   }
 }

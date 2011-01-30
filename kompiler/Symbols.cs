@@ -20,6 +20,7 @@ namespace kompiler {
     //k and m will be commited to the latest scope on the scopes stack when
     //   commit(INTEGER) is called with a variable type as the parameter (in this case INTEGER)
 
+
     // The single object instance for this class.
     private static Symbols c_symbols;
 
@@ -43,6 +44,22 @@ namespace kompiler {
 
         // return a reference to the only instance
         return c_symbols;
+      }
+    }
+
+    /// <summary>
+    /// Get the memory usage in the current scope
+    /// </summary>
+    public int Mem {
+      get {
+        int i = 0;
+        foreach (KeyValuePair<string, Attribute> var in m_scopes.Peek())
+          switch (var.Value.m_var_type) {
+            case Attribute.VAR_TYPE.INTEGER:
+              i += 2;
+              break;
+          }
+        return i;
       }
     }
 
@@ -126,7 +143,7 @@ namespace kompiler {
     /// Set the category for the following variables that will be added
     /// </summary>
     /// <param name="cat"></param>
-    public void initCategory(Attribute.ID_CAT cat){
+    public void beginCategory(Attribute.ID_CAT cat){
       m_cat = cat;
     }
 

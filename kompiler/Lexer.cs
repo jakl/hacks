@@ -13,12 +13,16 @@ namespace kompiler {
     string m_source;
     int m_index;//track where the next token should be scanned for in the source
     int m_lineNumber;
+    string m_errors;
 
-    LinkedList<Token> m_tokens = new LinkedList<Token>();
+    public string Errors {
+      get { return m_errors; }
+    }
 
-    public LinkedList<Token> Tokens {
+    List<Token> m_tokens = new List<Token>();
+
+    public List<Token> Tokens {
       get { return m_tokens; }
-      //set { m_tokens = value; }
     }
 
     // The hastable of Modula-2 keywords
@@ -35,7 +39,7 @@ namespace kompiler {
     //    instance.
     private Lexer() { } // private constructor so no one else can create one.
 
-    static public Lexer GetTokenizer() {
+    static public Lexer GetLexer() {
       lock (c_tokenizerLock) {
         // if this is the first request, initialize the one instance
         if (c_tokenizer == null) {
@@ -73,12 +77,12 @@ namespace kompiler {
     /// </summary>
     /// <param name="source">string to lex/tokenize</param>
     /// <returns>error message</returns>
-    public string Lex(string source) {
+    public bool Lex(string source) {
       m_source = source;
       m_index = 0;
       m_lineNumber = 1;
 
-      m_tokens = new LinkedList<Token>();
+      m_tokens = new List<Token>();
 
       while (m_index < m_source.Length) {
 
@@ -92,12 +96,14 @@ namespace kompiler {
         if (LexRegexes()) continue;
         if (Lex2Chars()) continue;
         if (Lex1Char()) continue;
-        return "Quit lexing at line " + m_lineNumber + " due to the first word in the following:\r\n" + m_source.Substring(m_index);
+        m_errors = "Quit lexing at line " + m_lineNumber + " due to the first word in the following:\r\n" + m_source.Substring(m_index);
+        return false;
       }
-      m_tokens.AddLast(new Token(Token.TOKENTYPE.EOF, "EOF", ++m_lineNumber));
+      m_tokens.Add(new Token(Token.TOKENTYPE.EOF, "EOF", ++m_lineNumber));
       //This was the old way of calculating lineNumber: m_source.Substring(0, m_index).Split('\n').Length;
 
-      return "No errors in lexing";
+      m_errors = "No errors in lexing";
+      return true;
     } //Lex
 
     private bool LexKeyWords() {
@@ -108,7 +114,7 @@ namespace kompiler {
           //position the index after the word
           m_index += keyword.Length;
 
-          m_tokens.AddLast(new Token(m_keywords[keyword], keyword, m_lineNumber));
+          m_tokens.Add(new Token(m_keywords[keyword], keyword, m_lineNumber));
           return true;
         }
       return false;
@@ -134,7 +140,7 @@ namespace kompiler {
             m_index--;//decrement the index to reparse the last char
           }
 
-          m_tokens.AddLast(new Token(kvp.Key, value, m_lineNumber));
+          m_tokens.Add(new Token(kvp.Key, value, m_lineNumber));
           m_lineNumber += value.Split('\n').Length - 1;//find all the newlines in the match
           return true;
         }
@@ -150,7 +156,7 @@ namespace kompiler {
       foreach (KeyValuePair<Token.TOKENTYPE, string> kvp in Token.multichars)
         if (m_source.Substring(m_index, 2) == kvp.Value) {
           m_index+=2;
-          m_tokens.AddLast(new Token(kvp.Key, kvp.Value.ToString(), m_lineNumber));
+          m_tokens.Add(new Token(kvp.Key, kvp.Value.ToString(), m_lineNumber));
           return true;
         }
       return false;
@@ -161,7 +167,7 @@ namespace kompiler {
       foreach (KeyValuePair<Token.TOKENTYPE, char> kvp in Token.singlechars)
         if (m_source[m_index] == kvp.Value) {
           m_index++;
-          m_tokens.AddLast(new Token(kvp.Key, kvp.Value.ToString(), m_lineNumber));
+          m_tokens.Add(new Token(kvp.Key, kvp.Value.ToString(), m_lineNumber));
           return true;
         }
       return false;
