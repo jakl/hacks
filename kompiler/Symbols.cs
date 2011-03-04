@@ -12,14 +12,13 @@ namespace kompiler {
     //A stack of variables that will be added during the next comit()
     Dictionary<string, object> m_incomplete_vars = new Dictionary<string, object>();
 
-    Attribute.ID_CAT m_cat;//track the current category when defining multiple variables
+    Attribute.CATEGORY m_cat;//track the current category when defining multiple variables
 
     //consider this exerpt from All.mod :
     //VAR k, m : INTEGER ;  //k and m are both of category VAR
     //k and m will be put on the incomplete vars stack
     //k and m will be commited to the latest scope on the scopes stack when
     //   commit(INTEGER) is called with a variable type as the parameter (in this case INTEGER)
-
 
     // The single object instance for this class.
     private static Symbols c_symbols;
@@ -48,17 +47,22 @@ namespace kompiler {
     }
 
     /// <summary>
+    /// Initialize symbol system for fresh use
+    /// </summary>
+    public void init() {
+      m_scopes = new Stack<Dictionary<string, Attribute>>();
+      m_scopes.Push(new Dictionary<string, Attribute>());
+      m_incomplete_vars = new Dictionary<string, object>();
+    }
+
+    /// <summary>
     /// Get the memory usage in the current scope
     /// </summary>
     public int Mem {
       get {
         int i = 0;
         foreach (KeyValuePair<string, Attribute> var in m_scopes.Peek())
-          switch (var.Value.m_var_type) {
-            case Attribute.VAR_TYPE.INTEGER:
-              i += 2;
-              break;
-          }
+          i += var.Value.Mem;
         return i;
       }
     }
@@ -68,6 +72,8 @@ namespace kompiler {
     /// </summary>
     public void nest() {
       m_scopes.Push(new Dictionary<string, Attribute>());
+      //for each new scope there is probably a new procedure call, which means a fresh stack
+      // we want to start with a fresh offset for our fresh stack
     }
 
     /// <summary>
@@ -132,10 +138,21 @@ namespace kompiler {
     /// Clear the cached variables afterwards
     /// </summary>
     /// <param name="type"></param>
-    public void commit(Attribute.VAR_TYPE type) {
-      foreach (KeyValuePair<string, object> var in m_incomplete_vars)
-        //default all variable values to null
-        m_scopes.Peek()[var.Key]= new Attribute(m_cat, type, var.Value);
+    public void commitType(Attribute.TYPE type) {
+      //the IP register is saved automagically by the assembly instruction, "call"
+      //the BP register is backed-up by us, to be used fresh, and restored later
+      const int INITIAL_OFFSET_DUE_TO_IP_AND_BP = 4;
+      int offset = INITIAL_OFFSET_DUE_TO_IP_AND_BP;
+      int increment = 0;
+      switch (type) {
+        case Attribute.TYPE.INTEGER: increment = Attribute.INTEGER_SIZE;
+          break;
+      }
+      foreach (KeyValuePair<string, object> var in m_incomplete_vars) {
+        //Add a variable by name mapped to its attribute to the top hashmap of a stack of hashes
+        m_scopes.Peek()[var.Key] = new Attribute(m_cat, type, offset, var.Value);
+        offset += increment;
+      }
       m_incomplete_vars.Clear();
     }
 
@@ -143,7 +160,7 @@ namespace kompiler {
     /// Set the category for the following variables that will be added
     /// </summary>
     /// <param name="cat"></param>
-    public void beginCategory(Attribute.ID_CAT cat){
+    public void beginCategory(Attribute.CATEGORY cat){
       m_cat = cat;
     }
 

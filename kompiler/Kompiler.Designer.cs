@@ -35,26 +35,22 @@
           this.savebtn = new System.Windows.Forms.Button();
           this.saveasbtn = new System.Windows.Forms.Button();
           this.tabs = new System.Windows.Forms.TabControl();
+          this.assemblytab = new System.Windows.Forms.TabPage();
+          this.assemblybox = new System.Windows.Forms.RichTextBox();
           this.tokenstab = new System.Windows.Forms.TabPage();
           this.tokensbox = new System.Windows.Forms.RichTextBox();
-          this.chartab = new System.Windows.Forms.TabPage();
-          this.getcharbox = new System.Windows.Forms.RichTextBox();
           this.errorstab = new System.Windows.Forms.TabPage();
           this.errorbox = new System.Windows.Forms.RichTextBox();
           this.notetab = new System.Windows.Forms.TabPage();
           this.notebox = new System.Windows.Forms.RichTextBox();
-          this.lexbtn = new System.Windows.Forms.Button();
-          this.getcharbtn = new System.Windows.Forms.Button();
-          this.commentcheck = new System.Windows.Forms.CheckBox();
-          this.assemblytab = new System.Windows.Forms.TabPage();
-          this.assemblybox = new System.Windows.Forms.RichTextBox();
           this.parsebtn = new System.Windows.Forms.Button();
+          this.commentcheck = new System.Windows.Forms.CheckBox();
+          this.lineNumbers_For_RichTextBox1 = new LineNumbers.LineNumbers_For_RichTextBox();
           this.tabs.SuspendLayout();
+          this.assemblytab.SuspendLayout();
           this.tokenstab.SuspendLayout();
-          this.chartab.SuspendLayout();
           this.errorstab.SuspendLayout();
           this.notetab.SuspendLayout();
-          this.assemblytab.SuspendLayout();
           this.SuspendLayout();
           // 
           // codebox
@@ -63,9 +59,9 @@
                       | System.Windows.Forms.AnchorStyles.Left)
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.codebox.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-          this.codebox.Location = new System.Drawing.Point(12, 62);
+          this.codebox.Location = new System.Drawing.Point(29, 62);
           this.codebox.Name = "codebox";
-          this.codebox.Size = new System.Drawing.Size(719, 286);
+          this.codebox.Size = new System.Drawing.Size(702, 286);
           this.codebox.TabIndex = 0;
           this.codebox.Text = "";
           this.codebox.WordWrap = false;
@@ -116,7 +112,6 @@
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.tabs.Controls.Add(this.assemblytab);
           this.tabs.Controls.Add(this.tokenstab);
-          this.tabs.Controls.Add(this.chartab);
           this.tabs.Controls.Add(this.errorstab);
           this.tabs.Controls.Add(this.notetab);
           this.tabs.Location = new System.Drawing.Point(12, 354);
@@ -124,6 +119,26 @@
           this.tabs.SelectedIndex = 0;
           this.tabs.Size = new System.Drawing.Size(719, 235);
           this.tabs.TabIndex = 5;
+          // 
+          // assemblytab
+          // 
+          this.assemblytab.Controls.Add(this.assemblybox);
+          this.assemblytab.Location = new System.Drawing.Point(4, 22);
+          this.assemblytab.Name = "assemblytab";
+          this.assemblytab.Size = new System.Drawing.Size(711, 209);
+          this.assemblytab.TabIndex = 4;
+          this.assemblytab.Text = "Assembly";
+          this.assemblytab.UseVisualStyleBackColor = true;
+          // 
+          // assemblybox
+          // 
+          this.assemblybox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                      | System.Windows.Forms.AnchorStyles.Right)));
+          this.assemblybox.Location = new System.Drawing.Point(3, 3);
+          this.assemblybox.Name = "assemblybox";
+          this.assemblybox.Size = new System.Drawing.Size(707, 205);
+          this.assemblybox.TabIndex = 0;
+          this.assemblybox.Text = "";
           // 
           // tokenstab
           // 
@@ -144,32 +159,9 @@
           this.tokensbox.Location = new System.Drawing.Point(6, 6);
           this.tokensbox.Name = "tokensbox";
           this.tokensbox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-          this.tokensbox.Size = new System.Drawing.Size(699, 197);
+          this.tokensbox.Size = new System.Drawing.Size(701, 197);
           this.tokensbox.TabIndex = 0;
           this.tokensbox.Text = "No tokens yet lexed... maybe you want to click Lex";
-          // 
-          // chartab
-          // 
-          this.chartab.Controls.Add(this.getcharbox);
-          this.chartab.Location = new System.Drawing.Point(4, 22);
-          this.chartab.Name = "chartab";
-          this.chartab.Size = new System.Drawing.Size(711, 209);
-          this.chartab.TabIndex = 2;
-          this.chartab.Text = "Get Char";
-          this.chartab.UseVisualStyleBackColor = true;
-          // 
-          // getcharbox
-          // 
-          this.getcharbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                      | System.Windows.Forms.AnchorStyles.Right)));
-          this.getcharbox.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-          this.getcharbox.Location = new System.Drawing.Point(3, 3);
-          this.getcharbox.Name = "getcharbox";
-          this.getcharbox.ReadOnly = true;
-          this.getcharbox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-          this.getcharbox.Size = new System.Drawing.Size(705, 203);
-          this.getcharbox.TabIndex = 0;
-          this.getcharbox.Text = "";
           // 
           // errorstab
           // 
@@ -190,7 +182,7 @@
           this.errorbox.Location = new System.Drawing.Point(6, 6);
           this.errorbox.Name = "errorbox";
           this.errorbox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-          this.errorbox.Size = new System.Drawing.Size(699, 197);
+          this.errorbox.Size = new System.Drawing.Size(701, 197);
           this.errorbox.TabIndex = 0;
           this.errorbox.Text = "";
           // 
@@ -206,36 +198,30 @@
           // 
           // notebox
           // 
+          this.notebox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                      | System.Windows.Forms.AnchorStyles.Right)));
           this.notebox.Location = new System.Drawing.Point(3, 3);
           this.notebox.Name = "notebox";
-          this.notebox.Size = new System.Drawing.Size(705, 203);
+          this.notebox.Size = new System.Drawing.Size(707, 203);
           this.notebox.TabIndex = 0;
           this.notebox.Text = "";
           // 
-          // lexbtn
+          // parsebtn
           // 
-          this.lexbtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.lexbtn.Location = new System.Drawing.Point(591, 12);
-          this.lexbtn.Name = "lexbtn";
-          this.lexbtn.Size = new System.Drawing.Size(59, 44);
-          this.lexbtn.TabIndex = 6;
-          this.lexbtn.Text = "Lex";
-          this.lexbtn.UseVisualStyleBackColor = true;
-          this.lexbtn.Click += new System.EventHandler(this.lexbtn_Click);
-          // 
-          // getcharbtn
-          // 
-          this.getcharbtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.getcharbtn.Location = new System.Drawing.Point(526, 12);
-          this.getcharbtn.Name = "getcharbtn";
-          this.getcharbtn.Size = new System.Drawing.Size(59, 44);
-          this.getcharbtn.TabIndex = 7;
-          this.getcharbtn.Text = "Get Char";
-          this.getcharbtn.UseVisualStyleBackColor = true;
-          this.getcharbtn.Click += new System.EventHandler(this.getcharbtn_Click);
+          this.parsebtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+          this.parsebtn.Font = new System.Drawing.Font("Comic Sans MS", 15.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+          this.parsebtn.ForeColor = System.Drawing.SystemColors.ControlText;
+          this.parsebtn.Location = new System.Drawing.Point(529, 12);
+          this.parsebtn.Name = "parsebtn";
+          this.parsebtn.Size = new System.Drawing.Size(121, 44);
+          this.parsebtn.TabIndex = 6;
+          this.parsebtn.Text = "Parse";
+          this.parsebtn.UseVisualStyleBackColor = true;
+          this.parsebtn.Click += new System.EventHandler(this.parsebtn_Click);
           // 
           // commentcheck
           // 
+          this.commentcheck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
           this.commentcheck.AutoSize = true;
           this.commentcheck.Location = new System.Drawing.Point(656, 12);
           this.commentcheck.Name = "commentcheck";
@@ -244,44 +230,51 @@
           this.commentcheck.Text = "Comments";
           this.commentcheck.UseVisualStyleBackColor = true;
           // 
-          // assemblytab
+          // lineNumbers_For_RichTextBox1
           // 
-          this.assemblytab.Controls.Add(this.assemblybox);
-          this.assemblytab.Location = new System.Drawing.Point(4, 22);
-          this.assemblytab.Name = "assemblytab";
-          this.assemblytab.Size = new System.Drawing.Size(711, 209);
-          this.assemblytab.TabIndex = 4;
-          this.assemblytab.Text = "Assembly";
-          this.assemblytab.UseVisualStyleBackColor = true;
-          // 
-          // assemblybox
-          // 
-          this.assemblybox.Location = new System.Drawing.Point(3, 3);
-          this.assemblybox.Name = "assemblybox";
-          this.assemblybox.Size = new System.Drawing.Size(707, 205);
-          this.assemblybox.TabIndex = 0;
-          this.assemblybox.Text = "";
-          // 
-          // parsebtn
-          // 
-          this.parsebtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.parsebtn.Location = new System.Drawing.Point(461, 12);
-          this.parsebtn.Name = "parsebtn";
-          this.parsebtn.Size = new System.Drawing.Size(59, 44);
-          this.parsebtn.TabIndex = 11;
-          this.parsebtn.Text = "Parse";
-          this.parsebtn.UseVisualStyleBackColor = true;
-          this.parsebtn.Click += new System.EventHandler(this.parsebtn_Click);
+          this.lineNumbers_For_RichTextBox1._SeeThroughMode_ = false;
+          this.lineNumbers_For_RichTextBox1.AutoSizing = true;
+          this.lineNumbers_For_RichTextBox1.BackgroundGradient_AlphaColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+          this.lineNumbers_For_RichTextBox1.BackgroundGradient_BetaColor = System.Drawing.Color.LightSteelBlue;
+          this.lineNumbers_For_RichTextBox1.BackgroundGradient_Direction = System.Drawing.Drawing2D.LinearGradientMode.Horizontal;
+          this.lineNumbers_For_RichTextBox1.BorderLines_Color = System.Drawing.Color.SlateGray;
+          this.lineNumbers_For_RichTextBox1.BorderLines_Style = System.Drawing.Drawing2D.DashStyle.Dot;
+          this.lineNumbers_For_RichTextBox1.BorderLines_Thickness = 1F;
+          this.lineNumbers_For_RichTextBox1.DockSide = LineNumbers.LineNumbers_For_RichTextBox.LineNumberDockSide.Left;
+          this.lineNumbers_For_RichTextBox1.GridLines_Color = System.Drawing.Color.SlateGray;
+          this.lineNumbers_For_RichTextBox1.GridLines_Style = System.Drawing.Drawing2D.DashStyle.Dot;
+          this.lineNumbers_For_RichTextBox1.GridLines_Thickness = 1F;
+          this.lineNumbers_For_RichTextBox1.LineNrs_Alignment = System.Drawing.ContentAlignment.TopRight;
+          this.lineNumbers_For_RichTextBox1.LineNrs_AntiAlias = true;
+          this.lineNumbers_For_RichTextBox1.LineNrs_AsHexadecimal = false;
+          this.lineNumbers_For_RichTextBox1.LineNrs_ClippedByItemRectangle = true;
+          this.lineNumbers_For_RichTextBox1.LineNrs_LeadingZeroes = true;
+          this.lineNumbers_For_RichTextBox1.LineNrs_Offset = new System.Drawing.Size(0, 0);
+          this.lineNumbers_For_RichTextBox1.Location = new System.Drawing.Point(11, 62);
+          this.lineNumbers_For_RichTextBox1.Margin = new System.Windows.Forms.Padding(0);
+          this.lineNumbers_For_RichTextBox1.MarginLines_Color = System.Drawing.Color.SlateGray;
+          this.lineNumbers_For_RichTextBox1.MarginLines_Side = LineNumbers.LineNumbers_For_RichTextBox.LineNumberDockSide.Right;
+          this.lineNumbers_For_RichTextBox1.MarginLines_Style = System.Drawing.Drawing2D.DashStyle.Solid;
+          this.lineNumbers_For_RichTextBox1.MarginLines_Thickness = 1F;
+          this.lineNumbers_For_RichTextBox1.Name = "lineNumbers_For_RichTextBox1";
+          this.lineNumbers_For_RichTextBox1.Padding = new System.Windows.Forms.Padding(0, 0, 2, 0);
+          this.lineNumbers_For_RichTextBox1.ParentRichTextBox = this.codebox;
+          this.lineNumbers_For_RichTextBox1.Show_BackgroundGradient = true;
+          this.lineNumbers_For_RichTextBox1.Show_BorderLines = true;
+          this.lineNumbers_For_RichTextBox1.Show_GridLines = true;
+          this.lineNumbers_For_RichTextBox1.Show_LineNrs = true;
+          this.lineNumbers_For_RichTextBox1.Show_MarginLines = true;
+          this.lineNumbers_For_RichTextBox1.Size = new System.Drawing.Size(17, 286);
+          this.lineNumbers_For_RichTextBox1.TabIndex = 12;
           // 
           // form
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
           this.ClientSize = new System.Drawing.Size(743, 601);
-          this.Controls.Add(this.parsebtn);
+          this.Controls.Add(this.lineNumbers_For_RichTextBox1);
           this.Controls.Add(this.commentcheck);
-          this.Controls.Add(this.getcharbtn);
-          this.Controls.Add(this.lexbtn);
+          this.Controls.Add(this.parsebtn);
           this.Controls.Add(this.tabs);
           this.Controls.Add(this.saveasbtn);
           this.Controls.Add(this.savebtn);
@@ -292,11 +285,10 @@
           this.Name = "form";
           this.Text = "Kompiler";
           this.tabs.ResumeLayout(false);
+          this.assemblytab.ResumeLayout(false);
           this.tokenstab.ResumeLayout(false);
-          this.chartab.ResumeLayout(false);
           this.errorstab.ResumeLayout(false);
           this.notetab.ResumeLayout(false);
-          this.assemblytab.ResumeLayout(false);
           this.ResumeLayout(false);
           this.PerformLayout();
 
@@ -313,17 +305,14 @@
         private System.Windows.Forms.TabPage tokenstab;
         private System.Windows.Forms.TabPage errorstab;
         private System.Windows.Forms.RichTextBox tokensbox;
-        private System.Windows.Forms.Button lexbtn;
+        private System.Windows.Forms.Button parsebtn;
         private System.Windows.Forms.RichTextBox errorbox;
-        private System.Windows.Forms.TabPage chartab;
-        private System.Windows.Forms.RichTextBox getcharbox;
-        private System.Windows.Forms.Button getcharbtn;
         private System.Windows.Forms.TabPage notetab;
         private System.Windows.Forms.RichTextBox notebox;
         private System.Windows.Forms.CheckBox commentcheck;
         private System.Windows.Forms.TabPage assemblytab;
         private System.Windows.Forms.RichTextBox assemblybox;
-        private System.Windows.Forms.Button parsebtn;
+        private LineNumbers.LineNumbers_For_RichTextBox lineNumbers_For_RichTextBox1;
     }
 }
 

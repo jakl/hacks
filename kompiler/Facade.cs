@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace kompiler {
   /// <summary>
@@ -54,13 +55,19 @@ namespace kompiler {
     }
 
     /// <summary>
-    /// Returns all the tokens, formatted in one large string
+    /// Returns true on successful lexing, and false otherwise.
+    /// Member datum m_tokenDump will contain valid tokens and m_errors will report errors.
     /// </summary>
     /// <param name="source">source code to parse as a string</param>
     /// <returns>formatted tokens</returns>
     public bool lex(string source) {
       bool successLexing = m_lexer.Lex(source);
       m_errors = m_lexer.Errors;
+
+      //Check to make sure the program starts with MODULE name; and ends with END name.
+      //If it doesn't, add those lines
+      m_lexer.addModuleWhenNonExistant();
+
       m_tokenDump = "Cnt Line Type                                 Lexeme\r\n";
       int count = 0;
       foreach (Token t in m_lexer.Tokens) {
@@ -69,11 +76,13 @@ namespace kompiler {
         else if(m_comments)
           m_tokenDump += count++ + "  " + t.ToString() + "\r\n";
       }
+
       return successLexing;
     }
 
     /// <summary>
-    /// Lexes then parses source code
+    /// Lexes then parses source code;
+    /// m_assemblyDump holds main assembly code and m_errors holds error messages on failure
     /// Creates a project folder for the source code based on the projectName parameter
     /// </summary>
     /// <param name="source">source code</param>
@@ -85,9 +94,12 @@ namespace kompiler {
       try {
         m_assemblyDump = m_parser.Parse(m_lexer.Tokens, projectName);
       } catch (Exception e) {
-        m_errors += '\n'+e.Message;
+        m_errors += '\n' + e.Message;
         return false;
+      } finally {
+        m_parser.Close();
       }
+      m_errors += "\nNo Errors Parsing";
       return true;
     }
   }

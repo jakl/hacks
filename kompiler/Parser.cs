@@ -25,6 +25,9 @@ namespace kompiler {
     //Current token
     private int m_index;
 
+    int m_IfCount = 1;
+    int m_LoopCount = 1;
+
     // To prevent access by more than one thread. This is the specific lock 
     //    belonging to the Class object.
     private static Object parserlock = typeof(Parser);
@@ -42,6 +45,15 @@ namespace kompiler {
         // return a reference to the only instance
         return parser;
       }
+    }
+
+    /// <summary>
+    /// Closes Emitter
+    /// </summary>
+    public void Close(){
+      m_emitter.Close();
+      m_IfCount = 1;
+      m_LoopCount = 1;
     }
 
 
@@ -79,61 +91,6 @@ namespace kompiler {
     } // Match
 
     /// <summary>
-    /// Return the TOKENTYPE of the begining of a declaration,
-    ///  or throw an exception if it doesn't exist
-    /// </summary>
-    /// <returns></returns>
-    Attribute.ID_CAT MatchDeclStart() {
-      Token.TOKENTYPE ret = 0;
-      try {
-        ret = Match(Token.TOKENTYPE.CONST).m_tokType;
-      } catch (Exception e) { }
-      try {
-        ret = Match(Token.TOKENTYPE.TYPE).m_tokType;
-      } catch (Exception e) { }
-      try {
-        ret = Match(Token.TOKENTYPE.VAR).m_tokType;
-      } catch (Exception e) { }
-      switch (ret) {
-        case Token.TOKENTYPE.CONST: return Attribute.ID_CAT.CONST;
-        case Token.TOKENTYPE.TYPE: return Attribute.ID_CAT.TYPE;
-        case Token.TOKENTYPE.VAR: return Attribute.ID_CAT.VAR;
-        default: throw (new Exception(string.Format(
-            "Expected Const, Type, or Var to begin a declaration; found {0} ('{1}')at source line {2}",
-            m_tokens[m_index].m_tokType.ToString(), m_tokens[m_index].m_strName, m_tokens[m_index].m_iLineNum
-          )));
-      }
-    }
-
-    /// <summary>
-    /// Return the TOKENTYPE of the end of a declaration,
-    ///   or throw an exception if it doesn't exist
-    /// </summary>
-    /// <returns></returns>
-    Attribute.VAR_TYPE MatchDeclEnd() {
-      Token.TOKENTYPE matchType = 0;
-      try {
-        matchType = Match(Token.TOKENTYPE.CARDINAL).m_tokType;
-      } catch (Exception e) { }
-      try {
-        matchType = Match(Token.TOKENTYPE.INTEGER).m_tokType;
-      } catch (Exception e) { }
-      try {
-        matchType = Match(Token.TOKENTYPE.REAL).m_tokType;
-      } catch (Exception e) { }
-      switch (matchType) {
-        case Token.TOKENTYPE.CARDINAL: return Attribute.VAR_TYPE.CARDINAL;
-        case Token.TOKENTYPE.INTEGER: return Attribute.VAR_TYPE.INTEGER;
-        case Token.TOKENTYPE.REAL: return Attribute.VAR_TYPE.REAL;
-        default: throw (new Exception(string.Format(
-            "Expected CARDINAL, INTEGER, or REAL to end a declaration; found {0} ('{1}')at source line {2}",
-            m_tokens[m_index].m_tokType.ToString(), m_tokens[m_index].m_strName, m_tokens[m_index].m_iLineNum
-          )));
-      }
-    }
-
-
-    /// <summary>
     /// This is the main method of this class. It receives a tokenizer and a FileDefaultManager 
     ///    and creates a parse tree.
     /// PRE:  The token list has been loaded.
@@ -141,20 +98,24 @@ namespace kompiler {
     ///    and assembled. The executable is complete. If errors are encountered,
     ///    they have been displayed and parsing/assembling suspended.
     /// Returns the core assembly code for easy viewing
+    /// Will change the working directory to inside a local project folder
+    /// Please change the directory up one level after this call
     /// </summary>
     public string Parse(List<Token> tokens, string projectName) {
       m_tokens = tokens;
       m_index = 0;
       m_emitter.init(projectName);
+      m_sym.init();
 
       // Parse a single module
-      string mainProc = Module();
+      Module();
 
       // Exit the main scope. Pass the total memory usage to the emitter.
       //c_emitter.MainProcPostamble(c_sym.ExitProcScope());
 
       // The parse is complete. Write all assembler files; then assemble them.
-      return m_emitter.WriteAFiles(projectName, mainProc);
+      //reset the working directory back to the origional
+      return m_emitter.WriteAFiles(projectName, m_sym.Mem);
     } // Parse
 
     /// <summary>
@@ -163,7 +124,7 @@ namespace kompiler {
     /// PRE:  The tokenizer, symbol table, and emitter are available.
     /// POST: The parse tree is complete. We are ready to assemble. Return the main procedure name
     /// </summary>
-    string Module() {
+    void Module() {
       //(MODULE) test04 ; //examples in parentheses
       Match(Token.TOKENTYPE.MODULE);
 
@@ -171,8 +132,6 @@ namespace kompiler {
       // We retain it to check the id given at the module close.
       string strModule = Match(Token.TOKENTYPE.ID).m_strName;//MODULE (test04) ;
       Match(Token.TOKENTYPE.SEMI_COLON);//MODULE test04 (;)
-
-      m_emitter.ProcPreamble(strModule);//Main procedure will be named after the module
 
       //Compiler EBNF handout marks the below as a block
 
@@ -186,13 +145,13 @@ namespace kompiler {
       // The statement begins with BEGIN.
       Match(Token.TOKENTYPE.BEGIN);
 
-      StmtList(); // parse a sequence of statements
+      StmtList(-1); // parse a sequence of statements
 
       // We are at the end of the "main" M2 procedure.
       Match(Token.TOKENTYPE.END);
 
-      //Close the main procedure, knowing how much memory was required
-      m_emitter.ProcPostamble(strModule, m_sym.Mem);
+      //Close the current procedure, knowing how much memory was required
+      m_emitter.ProcPostamble(m_sym.Mem);
 
       // The next token should be the module name given at first.
       if (Match(Token.TOKENTYPE.ID).m_strName != strModule)
@@ -202,7 +161,6 @@ namespace kompiler {
       // Otherwise we have the right token.
       Match(Token.TOKENTYPE.DOT);
       Match(Token.TOKENTYPE.EOF); // end of input file
-      return strModule;
     } // Module
 
     /// <summary>
@@ -219,23 +177,15 @@ namespace kompiler {
       //Pieces of comment examples is parentheses are what will be matched next
 
       while (true) {
-        try {
-          //(VAR) i : INTEGER ;
-          m_sym.beginCategory(MatchDeclStart());
-        } catch (Exception e) { break; }//Ended without finding anything
-
-
-        //Automatically throw and die on any exceptions in the middle of a declaration
-
-        //VAR (i) : INTEGER ;
-        m_sym.add(Match(Token.TOKENTYPE.ID).m_strName);
-
-        Match(Token.TOKENTYPE.COLON);
-
-        //VAR i : (INTEGER) ;
-        m_sym.commit(MatchDeclEnd());
-
-        Match(Token.TOKENTYPE.SEMI_COLON);
+        //(VAR) i : INTEGER ;
+        //or
+        //(CONST) low = 3;
+        if (Token.TOKENTYPE.VAR == m_tokens[m_index].m_tokType)
+          VAR();
+        else if (Token.TOKENTYPE.CONST == m_tokens[m_index].m_tokType)
+          CONST();
+        else break;
+        //add another case for TYPE or PROCEDURE later, as needed
       }
     }
 
@@ -243,6 +193,19 @@ namespace kompiler {
     /// Parse the declaration of a constant (M2 Users Manual)
     /// </summary>
     void CONST() {
+      Match(Token.TOKENTYPE.CONST);
+
+      //	CONST (low = 3; hi = 7;)
+      while (true) {
+        string const_name;
+        try {
+          const_name = Match(Token.TOKENTYPE.ID).m_strName;
+        } catch { break; }
+        Match(Token.TOKENTYPE.EQUAL);
+        int const_value = int.Parse(Match(Token.TOKENTYPE.INT_NUM).m_strName);
+        m_sym.add(const_name, const_value);
+        Match(Token.TOKENTYPE.SEMI_COLON);
+      }
     } // CONST ()
 
     /// <summary>
@@ -274,32 +237,86 @@ namespace kompiler {
     ///    VAR's while parsing a DclList (VAR i:INTEGER: VAR j:INTEGER) or 
     ///    while parsing a procedure parameter list.
     ///    
-    /// PRE:  false -> parsing a VAR in a DclList
+    /// PRE:  false -> parsing a VAR in a DclList (default, and only option, for now)
     ///       true  -> parsing a proc. parameter list within parens.
+    ///       Assume false for now. A boolean parameter will be added later for a proc. parameter list when needed.
     /// POST: All variables are added to the symbol table.
     /// </summary>
-    void VAR(bool bParsingParameters) {
+    void VAR() {
+      Match(Token.TOKENTYPE.VAR);
+      m_sym.beginCategory(Attribute.CATEGORY.VAR);
+      while (true) {
+        m_sym.add(Match(Token.TOKENTYPE.ID).m_strName);
+        try { Match(Token.TOKENTYPE.COMMA); } catch { break; }
+      }
+      Match(Token.TOKENTYPE.COLON);
+
+      //only need to support integer variables for now. Add REAL or STRING to this later, when needed.
+      Match(Token.TOKENTYPE.INTEGER);
+      m_sym.commitType(Attribute.TYPE.INTEGER);
+      Match(Token.TOKENTYPE.SEMI_COLON);
     } // VAR
 
     /// <summary>
-    /// Check to see what kind of statement is input.
+    /// Emit appropriate code for each statement found until an end or else is found.
     /// </summary>
-    void StmtList() {
+    /// <param name="loopID">
+    /// If an EXIT is found, generate appropriate code
+    /// to leave the loop identified by this number.
+    /// Make this negative when not in a loop to catch rogue EXIT statements
+    /// </param>
+    void StmtList(int loopID) {
       /*SAMPLE CODE FROM TEST04
         i := 3 ;
         WRINT ( i ) ;
         WRLN ;
       */
-
-      while (m_tokens[m_index].m_tokType != Token.TOKENTYPE.END) {
-        if (m_tokens[m_index].m_tokType == Token.TOKENTYPE.ID)
-          Assignment();
-        if (m_tokens[m_index].m_tokType == Token.TOKENTYPE.WRINT)
+      bool noValidStatements = true;
+      while (m_tokens[m_index].m_tokType != Token.TOKENTYPE.END && m_tokens[m_index].m_tokType != Token.TOKENTYPE.ELSE) {
+        if(m_tokens[m_index].m_tokType == Token.TOKENTYPE.ID){
+          Assignment(Match(Token.TOKENTYPE.ID).m_strName);
+          noValidStatements = false;
+        }
+        else if(m_tokens[m_index].m_tokType == Token.TOKENTYPE.WRINT){
+          Match(Token.TOKENTYPE.WRINT);
           WRINT();
-        if (m_tokens[m_index].m_tokType == Token.TOKENTYPE.WRSTR)
+          noValidStatements = false;
+        }
+        else if(m_tokens[m_index].m_tokType == Token.TOKENTYPE.WRSTR){
+          Match(Token.TOKENTYPE.WRSTR);
           WRSTR();
-        if (m_tokens[m_index].m_tokType == Token.TOKENTYPE.WRLN)
+          noValidStatements = false;
+        }
+        else if(m_tokens[m_index].m_tokType == Token.TOKENTYPE.WRLN){
+          Match(Token.TOKENTYPE.WRLN);
           WRLN();
+          noValidStatements = false;
+        }
+        else if(m_tokens[m_index].m_tokType == Token.TOKENTYPE.IF){
+          Match(Token.TOKENTYPE.IF);
+          IfThenElse(loopID);
+          noValidStatements = false;
+        }
+        else if(m_tokens[m_index].m_tokType == Token.TOKENTYPE.LOOP){
+          Match(Token.TOKENTYPE.LOOP);
+          LOOP();
+          noValidStatements = false;
+        }
+        else if(m_tokens[m_index].m_tokType == Token.TOKENTYPE.EXIT){
+          Match(Token.TOKENTYPE.EXIT);
+          Match(Token.TOKENTYPE.SEMI_COLON);
+          if(loopID < 0)
+            throw new Exception("Not a valid EXIT since there is no current loop to leave at line: "
+              + m_tokens[m_index].m_iLineNum);
+          m_emitter.ExitLoop(loopID);
+          noValidStatements = false;
+        }
+        if (noValidStatements == true)
+          throw new Exception("No valid statement found while parsing on line: "
+            + m_tokens[m_index].m_iLineNum
+            + " near this token: "
+            + m_tokens[m_index].m_strName);
+        noValidStatements = true;
       }
       //Assignment();
     } // StmtList
@@ -311,13 +328,13 @@ namespace kompiler {
     ///    Attr refers to its entry in the symbol table.
     /// POST: Code is emitted to complete the assignment.
     /// </summary>
-    void Assignment() {
+    /// <param name="name">variable name</param>
+    void Assignment(string name) {
       //i := 3 ;
 
-      string name = Match(Token.TOKENTYPE.ID).m_strName;
       Match(Token.TOKENTYPE.ASSIGN);
-      int value = int.Parse(Match(Token.TOKENTYPE.INT_NUM).m_strName);
-      m_sym.setVal(name, value);
+      Expr();
+      m_emitter.SetInt(m_sym.get(name).m_offset);
       Match(Token.TOKENTYPE.SEMI_COLON);
     } // Assignment
 
@@ -327,22 +344,8 @@ namespace kompiler {
     void WRINT() {
       //WRINT ( 42 ) ;
 
-      Match(Token.TOKENTYPE.WRINT);
-      Match(Token.TOKENTYPE.LEFT_PAREN);
-
-      //Integer literal found
-      if(m_tokens[m_index].m_tokType == Token.TOKENTYPE.INT_NUM)
-        //Parse the string version to an integer and write it
-        m_emitter.WRINT(int.Parse(Match(Token.TOKENTYPE.INT_NUM).m_strName));
-
-      //Integer variable found
-      else if(m_tokens[m_index].m_tokType == Token.TOKENTYPE.ID)
-        //Take the value of the variable from the symbol table and write it
-        //THIS IS A KNOWN HACK AND VARIABLES VALUES *SHOULD* BE ON THE STACK
-        //...at least test04 compiles with this hack and I can sleep for church tomorrow
-        m_emitter.WRINT((int)m_sym.get(Match(Token.TOKENTYPE.ID).m_strName).m_value);
-
-      Match(Token.TOKENTYPE.RIGHT_PAREN);
+      Expr();
+      m_emitter.WRINT();
       Match(Token.TOKENTYPE.SEMI_COLON);
     }
 
@@ -352,7 +355,6 @@ namespace kompiler {
     void WRLN() {
       //WRLN ;
 
-      Match(Token.TOKENTYPE.WRLN);
       m_emitter.WRLN();
       Match(Token.TOKENTYPE.SEMI_COLON);
     }
@@ -363,22 +365,89 @@ namespace kompiler {
     void WRSTR() {
       //WRSTR ( "Hello world!" ) ;
 
-      Match(Token.TOKENTYPE.WRSTR);
       Match(Token.TOKENTYPE.LEFT_PAREN);
       m_emitter.WRSTR(Match(Token.TOKENTYPE.STRING).m_strName);
       Match(Token.TOKENTYPE.RIGHT_PAREN);
       Match(Token.TOKENTYPE.SEMI_COLON);
     }
 
-    //********WARNING********WARNING********WARNING****
-    //WARNING: NOTHING BELOW IS USED YET OR IMPLEMENTED
-    //********WARNING********WARNING********WARNING****
-
     /// <summary>
-    /// PRE:  We parsed "IF".
+    /// PRE:  We found an "IF".
     /// POST: We emit all the code for this compound statement.
     /// </summary>
-    void IfThenElse() {
+    /// <param name="loopID">If we are inside a loop, track the ID number to be able to process an EXIT statement</param>
+    void IfThenElse(int loopID) {
+      /*Test05.mod Example Excerpt
+       * IF k > l THEN
+            WRINT ( k ) ;
+            WRLN ;
+        ELSE
+            WRINT ( l ) ;
+            WRLN ;
+        END ;*/
+      //Left operand in a comparison can be an entire expression, which is immediately evaluated
+      Expr();
+      //Evaluate the right operand, and setup a jump statement to jump to a false labled block of code if the compare failed
+      int comparisonID = BeginCompare();
+      Match(Token.TOKENTYPE.THEN);
+      //Output code to run, if the compare didn't jump to the false label
+      StmtList(loopID);
+      //Jump to the end of this block of code, past the false label
+      m_emitter.JumpEndOfCompare(comparisonID);
+      //Create the false label
+      m_emitter.FalseCompareBlock(comparisonID);
+
+      try {//Else block might not exist, so only fill in code uner the false label if it does
+        Match(Token.TOKENTYPE.ELSE);
+        //Output code to run in the case of a failed comparison
+        StmtList(loopID);
+      } catch { };
+
+      Match(Token.TOKENTYPE.END);
+      //Mark the end of this block with an end label
+      m_emitter.EndOfCompare(comparisonID);
+      Match(Token.TOKENTYPE.SEMI_COLON);
+    }
+
+    /// <summary>
+    /// Find the next comparison operator, match it, evaluate the following expresion,
+    /// emit code to jump to a true or false code block
+    /// Return a unique number to identify this comparison block
+    /// </summary>
+    int BeginCompare() {
+      switch (m_tokens[m_index].m_tokType) {
+        case Token.TOKENTYPE.LESS_THAN:
+          Match(Token.TOKENTYPE.LESS_THAN);
+          Expr();
+          m_emitter.LessThanOperation(m_IfCount);
+          break;
+        case Token.TOKENTYPE.GRTR_THAN:
+          Match(Token.TOKENTYPE.GRTR_THAN);
+          Expr();
+          m_emitter.GreaterThanOperation(m_IfCount);
+          break;
+        case Token.TOKENTYPE.LESS_THAN_EQ:
+          Match(Token.TOKENTYPE.LESS_THAN_EQ);
+          Expr();
+          m_emitter.LessThanEqOperation(m_IfCount);
+          break;
+        case Token.TOKENTYPE.GRTR_THAN_EQ:
+          Match(Token.TOKENTYPE.GRTR_THAN_EQ);
+          Expr();
+          m_emitter.GreaterThanEqOperation(m_IfCount);
+          break;
+        case Token.TOKENTYPE.EQUAL:
+          Match(Token.TOKENTYPE.EQUAL);
+          Expr();
+          m_emitter.EqualOperation(m_IfCount);
+          break;
+        case Token.TOKENTYPE.NOT_EQ:
+          Match(Token.TOKENTYPE.NOT_EQ);
+          Expr();
+          m_emitter.NotEqualOperation(m_IfCount);
+          break;
+      }
+      return m_IfCount++;
     }
 
     /// <summary>
@@ -386,6 +455,12 @@ namespace kompiler {
     /// POST: We emit all the code for this compound statement.
     /// </summary>
     void LOOP() {
+      int loopID = m_LoopCount++;
+      m_emitter.BeginLoop(loopID);
+      StmtList(loopID);
+      Match(Token.TOKENTYPE.END);
+      Match(Token.TOKENTYPE.SEMI_COLON);
+      m_emitter.EndLoop(loopID);
     }
 
 
@@ -412,19 +487,121 @@ namespace kompiler {
     /// 
     ///  Factor         -> ( Expr )  |  Value   |  NOT Factor (M2 User's Manual pp. 109f.)
     /// </summary>
+    //
 
+    /// <summary>
+    /// An expression is evaluated and the solution is pushed on the stack
+    /// </summary>
     void Expr() {
+      //  Expr           -> SimpleExpr RelOp SimpleExpr  |  SimpleExpr
+      SimpleExpr();
     } // Expr ()
 
     void SimpleExpr() {
+      //  SimpleExpr     -> Term RestSimpleExpr
+      Term();
+      RestSimpleExpr();
     } // SimpleExpr
 
     void RestSimpleExpr() {
+      //  RestSimpleExpr -> + Term RestSimpleExpr  |  - Term RestSimpleExpr  |  OR Term RestSimpleExpr  |  epsilon
+      switch (m_tokens[m_index].m_tokType) {
+        case Token.TOKENTYPE.PLUS:
+          Match(Token.TOKENTYPE.PLUS);
+          Term();
+          m_emitter.AddOperation();
+          break;
+        case Token.TOKENTYPE.MINUS:
+          Match(Token.TOKENTYPE.MINUS);
+          Term();
+          m_emitter.MinusOperation();
+          break;
+        case Token.TOKENTYPE.OR:
+          Match(Token.TOKENTYPE.OR);
+          Term();
+          m_emitter.BitwiseOrOperation();
+          break;
+        default://epsilon
+          return;
+      }
+      RestSimpleExpr();
     } // RestSimpleExpr
 
-    // a few more methods . . .
+    void Term() {
+      //Term           -> Factor RestTerm
+      Factor();
+      RestTerm();
+    }//Term
 
+    void RestTerm() {
+      //  RestTerm       -> *   Factor RestTerm  |  /    Factor RestTerm  |  
+      // 				   MOD Factor RestTerm  |  AND  Factor RestTerm  |  epsilon
+      switch (m_tokens[m_index].m_tokType) {
+        case Token.TOKENTYPE.MULT:
+          Match(Token.TOKENTYPE.MULT);
+          Factor();
+          m_emitter.MultOperation();
+          break;
+        case Token.TOKENTYPE.DIV:
+          Match(Token.TOKENTYPE.DIV);
+          Factor();
+          m_emitter.DivOperation();
+          break;
+        case Token.TOKENTYPE.MOD:
+          Match(Token.TOKENTYPE.MOD);
+          Factor();
+          m_emitter.ModOperation();
+          break;
+        case Token.TOKENTYPE.AND:
+          Match(Token.TOKENTYPE.AND);
+          Factor();
+          m_emitter.AndOperation();
+          break;
+        default://epsilon
+          return;
+      }
+      RestTerm();
+    }//RestTerm
+
+    void Factor() {
+      //  Factor         -> ( Expr )  |  Value   |  NOT Factor (M2 User's Manual pp. 109f.)
+      switch (m_tokens[m_index].m_tokType) {
+        case Token.TOKENTYPE.LEFT_PAREN:
+          Match(Token.TOKENTYPE.LEFT_PAREN);
+          Expr();
+          Match(Token.TOKENTYPE.RIGHT_PAREN);
+          break;
+        case Token.TOKENTYPE.ID:
+        case Token.TOKENTYPE.INT_NUM:
+          Value();
+          break;
+        case Token.TOKENTYPE.NOT:
+          Factor();
+          m_emitter.NotOperation();
+          break;
+        default:
+          return;
+      }
+    }//Factor
+
+    /// <summary>
+    /// A value is an integer, variable, or constant
+    /// </summary>
     void Value() {
+      Token t = m_tokens[m_index];
+      if (t.m_tokType == Token.TOKENTYPE.INT_NUM) {
+        //If a integer literal is found, push it onto the stack
+        Match(Token.TOKENTYPE.INT_NUM);
+        m_emitter.PushInt(int.Parse(t.m_strName));
+      } else if (t.m_tokType == Token.TOKENTYPE.ID) {
+        Match(Token.TOKENTYPE.ID);
+        if (m_sym.get(t.m_strName).m_category == Attribute.CATEGORY.CONST)
+          //If a constant is found, push its value onto the stack
+          m_emitter.PushInt((int)m_sym.get(t.m_strName).m_value);
+        else
+          //If a variable is found, push the value at its offset in the stack onto the stack
+          m_emitter.PushVar(m_sym.get(t.m_strName).m_offset);
+      }
     } // Value ()    
   }
 }

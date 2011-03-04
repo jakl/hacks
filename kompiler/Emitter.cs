@@ -1,6 +1,6 @@
-using System;
 using System.Collections;   // ArrayList
 using System.IO;
+using System;
 
 /// <summary>
 /// Emitter is a singleton class that creates assembler files. It works with the
@@ -35,109 +35,87 @@ namespace kompiler {
       }
     }
 
-    public int m_iMainMemoryUse;
-    private string m_masm_bin_path = @"..\..\..\masm\";
-    private int m_strCount = 1;
-    private string m_curProc;
-    private string m_savedDir;
+    int m_strCount = 1;
+
+    //Handles all file operations
+    FileWriter fw;
+
+    /// <summary>
+    /// Setup the emitter for a new compilation project
+    /// </summary>
+    /// <param name="projectName"></param>
+    public void init(string projectName) {
+      fw = new FileWriter(projectName);
+
+      //reset the string counter
+      m_strCount = 1;
+    }
+
+    /// <summary>
+    /// Closes file manager
+    /// </summary>
+    public void Close() {
+      fw.CloseFiles();
+      fw.ResetWorkingDirectory();
+    }
+
+    /// <summary>
+    /// Move the int literal into a register to ensure it is 4 bytes wide, then push it onto the stack
+    /// </summary>
+    /// <param name="value"></param>
+    public void PushInt(int value) {
+      fw.Add("mov eax, " + value);
+      fw.Add("push eax");
+    }
+
+    /// <summary>
+    /// Push a variable from the depths of the stack onto the top of the stack
+    /// </summary>
+    /// <param name="offset"></param>
+    public void PushVar(int offset) {
+      fw.Add("push [ebp+" + offset + "]");
+    }
 
     /// <summary>
     /// PRE:  The desired output on the top of the run-time stack.
     /// POST: The integer is displayed.
     /// </summary>
     public void WRINT() {
-      using (StreamWriter sw = new StreamWriter(m_curProc + ".inc", true))
-        sw.Write("PutInt " + "[SP]\r\n");
+      fw.Add("pop eax");
+      fw.Add("invoke dwtoa, eax, addr int_buffer");
+      fw.Add("invoke StdOut, addr int_buffer");
     }
 
-    public void WRINT(int val) {
-      using (StreamWriter sw = new StreamWriter(m_curProc + ".inc", true))
-        sw.Write("PutInt " + val + "\r\n");
-    }
-
+    /// <summary>
+    /// Write a new line
+    /// </summary>
     public void WRLN() {
-      using (StreamWriter sw = new StreamWriter(m_curProc + ".inc", true))
-        sw.Write("nwln\r\n");
+      fw.Add("invoke StdOut, addr nwln_string");
     }
 
+    /// <summary>
+    /// Write a string literal to the proper files to make it appear on the screen
+    /// </summary>
+    /// <param name="strIn"></param>
     public void WRSTR(string strIn) {
-      using (StreamWriter sw = new StreamWriter("strings.inc", true))
-        sw.Write("str" + m_strCount + " DB '" + strIn + "', 0\r\n");
-      using (StreamWriter sw = new StreamWriter(m_curProc + ".inc", true))
-        sw.Write("PutStr " + "str" + m_strCount + "\r\n");
+      string strName = "str" + m_strCount;
+      fw.DeclString(strName + " DB '" + strIn + "', 0");
+      fw.Add("invoke StdOut, addr " + strName);
+      m_strCount++;
     }
-
-
-    // #########################################################################################
-    // A R I T H M E T I C               A R I T H M E T I C               A R I T H M E T I C      
-    // #########################################################################################
 
     /// <summary>
-    /// PRE:  The second operand is on the top of the stack. The first is next on the stack.
-    /// POST: The sum is on the top of the stack.
+    /// Pop an int off the stack and assign an int var within the depths of the stack to that value
     /// </summary>
-    public void AddOperation() {
+    /// <param name="offset"></param>
+    public void SetInt(int offset) {
+      fw.Add("pop eax");
+      fw.Add("mov [ebp+" + offset + "], eax");
     }
 
 
-    // #########################################################################################
-    // FILE HANDLER METHODS   FILE HANDLER METHODS   FILE HANDLER METHODS   FILE HANDLER METHODS   
-    // #########################################################################################
-
-    /// <summary>
-    /// PRE:  The parse is complete.
-    ///    c_iMainMemoryUse stores the amount of memory needed by the main procedure.
-    /// POST: A string is created and the assembler "shell" is written to it.
-    /// </summary>
-    string MainAFile(string codeFileName, int mainMemUse, string mainProc)
-    {
-      string strHead = "COMMENT |\r\nTITLE Kompiler output: " + codeFileName + "\r\n| Created: ";
-
-      // create a time stamp
-      DateTime dt = DateTime.Now;
-      strHead += dt.ToString("F") + "\r\n";
-      strHead += ".MODEL SMALL\r\n" // use the small (16-bit) memory model
-          + ".486\r\n"          // this allows 32-bit arithmetic (EAX, EDX registers, etc.)
-          + ".STACK 1000H\r\n"  // plenty of stack space: 4096 bytes
-          + ".DATA\r\n"         // begin DATA section
-
-          //definition of a char for "Press the any key to continue:" (John Broere 2002)
-          + "end_ch  DB  ?          ; John Broere 2002 idea to 'pause' at end.\r\r\n\n"
-          + "str0    DB  'Press a key...',0"
-
-          // The following file must be created later in the same directory
-          // to contain string constants of the form:
-          + ";===== string constants inserted here: ======\r\n"
-          + "INCLUDE strings.inc\r\r\n\n"
-
-          + ".CODE\r\n"
-          + "INCLUDE io.mac\r\n"
-          + "main PROC\r\n"
-          + ".STARTUP\r\n"
-          + "push    EBP            ; save EBP since we use it\r\n"
-          + "sub     SP, " + mainMemUse
-          + "         ; Room for main proc local vars\r\n"
-          + "mov     BP,SP          ; set the stack pointer as the base pointer\r\n"
-          + "call " + mainProc + "\r\n"
-
-          // adds a "pause" to the end of the program - thanks to John Broere 2002 !
-
-          // note that John added str0 to the string collection,
-          // and he added a character (end_ch) in the data segment above.
-          + "nwln\r\n"
-          + "PutStr  str0\r\n"
-          + "GetCh   end_ch\r\n"
-
-          // end the program
-          + "pop     EBP            ; restore EBP\r\n"
-          + ".EXIT\r\n"
-          + "main    ENDP           ; end of assembly outermost function\r\r\n\n"
-          + "; The following procedures must be included.\r\n"
-          + "INCLUDE proclist.inc   ; lines like 'INCLUDE V000000main.inc'\r\n"
-          + "END\r\n";
-      return strHead;
-    }
-
+    //This function is not yet used since multiple procedures aren't implemented
+    //The main procedure is created by default by the constructors
     /// <summary>
     /// PRE:  The name of the procedure is passed. We have already called 
     ///    EnterNewProcScope which tracks the current scope number. Note that this
@@ -145,28 +123,10 @@ namespace kompiler {
     ///    maintained by SymbolTable.
     /// POST: The preamble is emitted. This includes creating the assembly string
     ///    and increasing the procedure index.
-    ///    
-    /// Note the special version for the main procedure
     /// </summary>
-    public void ProcPreamble(string strProcName) {
-      using (StreamWriter sw = new StreamWriter("proclist.inc", true))
-        sw.Write("INCLUDE " + strProcName + ".inc\r\n");
-      using (StreamWriter sw = new StreamWriter(strProcName + ".inc"))
-        sw.Write(strProcName + " PROC\r\n");
-      m_curProc = strProcName;
-    }
-
-    public void init(string projectName) {
-      //Create the project directory which the emitter will use
-      m_savedDir = Directory.GetCurrentDirectory();
-      string projectRootDir = Directory.GetCurrentDirectory() + @"\" + projectName;
-      Directory.CreateDirectory(projectRootDir);
-      Directory.SetCurrentDirectory(projectRootDir);
-      using (StreamWriter sw = new StreamWriter("proclist.inc"))
-        sw.Write("");
-      using (StreamWriter sw = new StreamWriter("strings.inc"))
-        sw.Write("");
-    }
+    //public void ProcPreamble(string strProcName) {
+    //  m_curProc = strProcName;
+    //}
 
     /// <summary>
     /// PRE:  The name of the procedure and 
@@ -179,73 +139,236 @@ namespace kompiler {
     ///    
     /// Note the special version for the main procedure.
     /// </summary>
-    public void ProcPostamble(string strProcName, int iMemUse) {
-      using (StreamWriter sw = new StreamWriter(strProcName + ".inc", true))
-        sw.Write("ret " + iMemUse + "\r\n"
-          + strProcName + " ENDP");
+    public void ProcPostamble(int memUse) {
+      fw.EndProcedure(memUse);
     }
 
 
+    // #########################################################################################
+    // A R I T H M E T I C               A R I T H M E T I C               A R I T H M E T I C      
+    // #########################################################################################
+    //Optimize this section later to modify the top of the stack directly rather than using two registers
+
     /// <summary>
-    /// PRE:  The assembler files have all been "written" to strings.
-    /// POST: The files are written to the disk.
-    /// Returns the core assembly code for easy viewing
+    /// PRE:  The second operand is on the top of the stack. The first is next on the stack.
+    /// POST: The sum is on the top of the stack.
     /// </summary>
-    public string WriteAFiles(string codeFileName, string mainProc) {
-      // write the outermost "shell" assembler file
-      using (StreamWriter sw = new StreamWriter(codeFileName + ".asm"))
-      //make the naive assumption that 200 is enough memory for the program
-        sw.Write(MainAFile(codeFileName + ".asm", 200, mainProc));
-
-      BuildAndInvokeCmdFile(codeFileName);
-
-      string coreAssemblyCode = new StreamReader(mainProc + ".inc").ReadToEnd();
-
-      //Restore the working directory as it was before emitting took place
-      Directory.SetCurrentDirectory(m_savedDir);
-
-      return coreAssemblyCode;
+    public void AddOperation() {
+        fw.Add("pop eax\r\n"
+                + "pop ebx\r\n"
+                + "add eax, ebx\r\n"
+                + "push eax");
     }
 
     /// <summary>
-    /// PRE:  The parse is complete.
-    /// POST: The command file is created for remaining steps of the assembly process
-    ///    (compilation and linking to create an execcutable).
-    ///    This command file is then run to complete the compilation.
+    /// PRE:  The second operand is on the top of the stack. The first is next on the stack.
+    /// POST: The difference is on the top of the stack.
     /// </summary>
-    void BuildAndInvokeCmdFile(string name) {
-      string strMakeFile =
-          "REM ===== Kompiler: auto-created command file ======\r\n"
+    public void MinusOperation() {
+        fw.Add("pop ebx\r\n"
+                + "pop eax\r\n"
+                + "sub eax, ebx\r\n"
+                + "push eax");
+    }
 
-          // copy files needed for the compiling and linking (respectively)
-          + "copy " + m_masm_bin_path + "io.mac .\r\n"
-          + "copy " + m_masm_bin_path + "ml.exe .\r\n"
+    /// <summary>
+    /// PRE:  The second operand is on the top of the stack. The first is next on the stack.
+    /// POST: The answer is on the top of the stack.
+    /// </summary>
+    public void MultOperation() {
+        /*fw.Add("pop eax\r\n"
+                + "pop ebx\r\n"
+                + "imul bx\r\n"//assume the numbers are 16 bits, and fit in the space of just bx & ax
+                + "sal edx, 16\r\n"//dx holds the high bits, so move them to the high bits of edx
+                + "add eax, edx\r\n"//add the high bits of edx with the low bits of ax
+                + "push eax");*/
+      //according to http://www.cs.virginia.edu/~evans/cs216/guides/x86.html, this simpler multiply can be used
+      fw.Add("pop eax\r\n"
+                + "pop ebx\r\n"
+                + "imul eax, ebx\r\n"//assume the numbers are 16 bits, and fit in the space of just bx & ax
+                + "push eax");
+    }
 
-          + "copy " + m_masm_bin_path + "io.obj .\r\n"
-          + "copy " + m_masm_bin_path + "link16.exe .\r\n"
-          
-          // assemble to create the object file
-          + "ml /c " + name + ".asm\r\n"
+    /// <summary>
+    /// PRE:  The second operand is on the top of the stack. The first is next on the stack.
+    /// POST: The answer is on the top of the stack.
+    /// </summary>
+    public void DivOperation() {
+        /*fw.Add("pop ebx\r\n"
+                + "pop eax\r\n"
+                + "idiv bx\r\n"
+                + "push eax");*/
+        fw.Add("mov edx, 0\r\n"
+                  +"pop ebx\r\n"
+                  + "pop eax\r\n"
+                  + "idiv ebx\r\n"
+                  + "push eax");
+    }
 
-          // link the files to create the executable
-          + "link16 "
-          + name + ".obj io.obj, "
-          + name + ".exe, "
-          + name + ".map, , , \r\r\n\n" // Yes, the three commas are necessary!
+    /// <summary>
+    /// PRE:  The second operand is on the top of the stack. The first is next on the stack.
+    /// POST: The answer is on the top of the stack.
+    /// </summary>
+    public void ModOperation() {
+      fw.Add("mov edx, 0\r\n"
+                +"pop ebx\r\n"
+                + "pop eax\r\n"
+                + "idiv ebx\r\n"
+                + "push edx");
+    }
 
-          // add a pause, so we can see the results of the assembly and linking
-          // Thanks to John Broere 2002 !
-        //  + "@ PAUSE\r\r\n\n"
-        //  + name + ".exe\r\r\n\n" //my 64bit Windows 7 can't run 16 bit exe files; otherwise this should work
-          + "@ PAUSE\r\r\n\n";
+    /// <summary>
+    /// PRE:  The second operand is on the top of the stack. The first is next on the stack.
+    /// POST: The difference is on the top of the stack.
+    /// </summary>
+    public void BitwiseOrOperation() {
+      fw.Add("pop eax\r\n"
+                + "pop ebx\r\n"
+                + "or eax, ebx\r\n"
+                + "push eax");
+    }
 
-      // Write the command string to the proper file.
-      using (StreamWriter sw = new StreamWriter(name + ".cmd"))
-        sw.Write(strMakeFile);
+    /// <summary>
+    /// PRE:  The second operand is on the top of the stack. The first is next on the stack.
+    /// POST: The difference is on the top of the stack.
+    /// </summary>
+    public void AndOperation() {
+      fw.Add("pop eax\r\n"
+                + "pop ebx\r\n"
+                + "and eax, ebx\r\n"
+                + "push eax");
+    }
 
-      // Invoke the file just created. This uses the static method in our SystemCommand class.
-      //    If an error occurs it will throw the appropriate exception.
-      SystemCommand.SysCommand(name + ".cmd");
+    /// <summary>
+    /// PRE:  The operand is on the top of the stack.
+    /// POST: The answer is on the top of the stack.
+    /// </summary>
+    public void NotOperation() {
+        fw.Add("pop eax\r\n"
+                + "not eax\r\n"
+                + "push eax");
+    }
+
+    /// <summary>
+    /// Compare the integer next to first on the stack, with the first integer on the stack.
+    /// Integers are 4 bytes
+    /// </summary>
+    private void CompareOperation() {
+      fw.Add("pop ebx\r\n"
+                + "pop eax\r\n"
+                + "cmp eax, ebx");
+    }
+
+    /// <summary>
+    /// PRE: The second operand is on the top of the stack and the first is next
+    /// POST: Jump to the appropriate false label, if first is not less than second
+    /// True code is assumed to not require a jump
+    /// </summary>
+    public void LessThanOperation(int id) {
+      CompareOperation();
+      fw.Add("jge false" + id);
+    }
+
+    /// <summary>
+    /// PRE: The second operand is on the top of the stack and the first is next
+    /// POST: Jump to the appropriate false label, if first is not less than/equal to second
+    /// True code is assumed to not require a jump
+    /// </summary>
+    public void LessThanEqOperation(int id) {
+      CompareOperation();
+      fw.Add("jg false" + id);
+    }
+
+    /// <summary>
+    /// PRE: The second operand is on the top of the stack and the first is next
+    /// POST: Jump to the appropriate false label, if first is not greater than second
+    /// True code is assumed to not require a jump
+    /// </summary>
+    public void GreaterThanOperation(int id) {
+      CompareOperation();
+      fw.Add("jle false" + id);
+    }
+
+    /// <summary>
+    /// PRE: The second operand is on the top of the stack and the first is next
+    /// POST: Jump to the appropriate false label, if first is not greater than/equal to second
+    /// True code is assumed to not require a jump
+    /// </summary>
+    public void GreaterThanEqOperation(int id) {
+      CompareOperation();
+      fw.Add("jl false" + id);
+    }
+
+    /// <summary>
+    /// PRE: The second operand is on the top of the stack and the first is next
+    /// POST: Jump to the appropriate false label, if first is not equal to second
+    /// True code is assumed to not require a jump
+    /// </summary>
+    public void EqualOperation(int id) {
+      CompareOperation();
+      fw.Add("jne false" + id);
+    }
+
+    /// <summary>
+    /// PRE: The second operand is on the top of the stack and the first is next
+    /// POST: Jump to the appropriate false label, if first is equal to second
+    /// True code is assumed to not require a jump
+    /// </summary>
+    public void NotEqualOperation(int id) {
+      CompareOperation();
+      fw.Add("je false" + id);
+    }
+
+    /// <summary>
+    /// Finish a comparison block by jumping to the end, skipping the false lable usually
+    /// </summary>
+    public void JumpEndOfCompare(int id) {
+      fw.Add("jmp endif" + id);
+    }
+
+    /// <summary>
+    /// Begin code to run after a comparison evaluated to false
+    /// </summary>
+    public void FalseCompareBlock(int id) {
+      fw.Add("false" + id + ":");
+    }
+
+    /// <summary>
+    /// End of code block relating to a comparison
+    /// </summary>
+    public void EndOfCompare(int id) {
+      fw.Add("endif" + id + ":");
+    }
+
+    public void BeginLoop(int id) {
+      fw.Add("loop" + id + ":");
+    }
+
+    public void ExitLoop(int id) {
+      fw.Add("jmp endloop" + id);
+    }
+
+    public void EndLoop(int id) {
+      fw.Add("jmp loop" + id);
+      fw.Add("endloop" + id + ":");
+    }
+
+    // #########################################################################################
+    // FILE HANDLER METHODS   FILE HANDLER METHODS   FILE HANDLER METHODS   FILE HANDLER METHODS   
+    // #########################################################################################
+    /// <summary>
+    /// PRE:  The assembly code is complete, and the amount of memory that the main procedure uses is known
+    /// POST: All files are written to the disk, closed, and compiled.
+    /// Returns the main procedure assembly code for easy viewing
+    /// </summary>
+    /// <param name="codeFileName"></param>
+    /// <param name="mainMemory"></param>
+    /// <returns></returns>
+    public string WriteAFiles(string codeFileName, int mainMemory) {
+      fw.WriteMainFile(mainMemory);
+      fw.CloseFiles();
+      fw.Make();
+      return fw.MainProcedureCode;
     }
   }
 }

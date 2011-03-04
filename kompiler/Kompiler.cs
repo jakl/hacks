@@ -53,7 +53,6 @@ using System.IO;
 namespace kompiler {
   public partial class form : Form {
     private String m_filePath = null;
-    private int m_getCharIndex = 0;
 
     private Facade facade = Facade.GetFacade();
 
@@ -73,31 +72,13 @@ namespace kompiler {
         codebox.Text = new StreamReader(openPopup.OpenFile()).ReadToEnd();
 
         m_filePath = openPopup.FileName;
-
-        //reset the get char pointer back to the beginning of the file, and the text to blank
-        m_getCharIndex = 0;
-        getcharbox.Text = "";
       }
-    }
-
-    private void getcharbtn_Click(object sender, EventArgs e) {
-      if (m_getCharIndex < codebox.Text.Length)
-        //Add the next char to the screen, and increment our pointer into the text, if there are more characters
-        //The codebox is the central text box on the GUI with all the code
-        getcharbox.Text += codebox.Text[m_getCharIndex++];
-      getcharbtn.Text = "Get Char " + m_getCharIndex;
+      //lineNumbers_For_RichTextBox1.Refresh(); Why don't line numbers work when opening a file?
     }
 
     private void savebtn_Click(object sender, EventArgs e) {
       if (m_filePath != null) saveCodeboxToPath();
       else saveasbtn_Click(null, null);
-    }
-
-    private void lexbtn_Click(object sender, EventArgs e) {
-      facade.m_comments = commentcheck.Checked;
-      facade.lex(codebox.Text);
-      tokensbox.Text = facade.TokenDump;
-      errorbox.Text = facade.Errors;
     }
 
     private void saveasbtn_Click(object sender, EventArgs e) {
@@ -119,10 +100,10 @@ namespace kompiler {
     private void newbtn_Click(object sender, EventArgs e) {
       codebox.Text = "";
       m_filePath = null;
-      m_getCharIndex = 0;
     }
 
     private void parsebtn_Click(object sender, EventArgs e) {
+      facade.m_comments = commentcheck.Checked;
       if(m_filePath == null)
         facade.parse(codebox.Text, "unnamed");
       else

@@ -136,7 +136,7 @@ namespace kompiler {
           
           //(*Strings have a regex that ends in [^\"'][\"'][^\"'], meaning it will grab one char too many*)
           if (Token.TOKENTYPE.STRING == kvp.Key) {
-            value = value.Substring(0, value.Length - 1);//delete the last char
+            value = value.Substring(1, value.Length - 3);//delete the last char, don't include ""
             m_index--;//decrement the index to reparse the last char
           }
 
@@ -171,6 +171,28 @@ namespace kompiler {
           return true;
         }
       return false;
+    }
+
+    /// <summary>
+    /// Check the first token to see if it is MODULE. If it isn't, add the proper begin and end statements.
+    /// This is a convenience function to save time when writing short modula 2 programs
+    /// </summary>
+    public void addModuleWhenNonExistant() {
+      int firstNonComment;
+      for (firstNonComment = 0; m_tokens[firstNonComment].m_tokType == Token.TOKENTYPE.COMMENT; firstNonComment++)
+        ;
+      if (m_tokens[firstNonComment].m_tokType != Token.TOKENTYPE.MODULE) {
+        m_tokens.RemoveAt(m_tokens.Count-1);//remove EOF
+
+        m_tokens.Insert(firstNonComment, new Token(Token.TOKENTYPE.MODULE, "module", -1));
+        m_tokens.Insert(firstNonComment+1, new Token(Token.TOKENTYPE.ID, "unknown", -1));
+        m_tokens.Insert(firstNonComment+2, new Token(Token.TOKENTYPE.SEMI_COLON, "semicolon", -1));
+        m_tokens.Add(new Token(Token.TOKENTYPE.END, "end", int.MaxValue));
+        m_tokens.Add(new Token(Token.TOKENTYPE.ID, "unknown", int.MaxValue));
+        m_tokens.Add(new Token(Token.TOKENTYPE.DOT, "dot", int.MaxValue));
+
+        m_tokens.Add(new Token(Token.TOKENTYPE.EOF, "eof", int.MaxValue));//add EOF back in
+      }
     }
   } // class Lexer
 }
