@@ -152,8 +152,7 @@ namespace kompiler {
     /// </summary>
     /// <param name="procedureName"></param>
     public void NewProcedure(string procedureName) {
-      m_procedures[procedureName] = "";
-      m_procedures[procedureName] += (procedureName + " PROC") + "\r\n";
+      m_procedures[procedureName] = (procedureName + " PROC") + "\r\n";
 
       m_procedureIncludes.WriteLine("INCLUDE " + procedureName + CODE_FILE_EXTENSION);
       m_prototypeIncludes.WriteLine(procedureName + " PROTO");
@@ -164,16 +163,18 @@ namespace kompiler {
 
     /// <summary>
     /// Add the necessary "ProcName ENDP" and close the current procedure's file
+    /// Perform basic efficieny guarentee by eliminating extraneous push/pop combos
     /// </summary>
     public void EndProcedure(int memUse) {
       m_procedures[m_curProc] += ("pop ebp") + "\r\n";
       m_procedures[m_curProc] += ("ret " + memUse) + "\r\n";
       m_procedures[m_curProc] += (m_curProc + " endp") + "\r\n";
-      //string s = Regex.Replace("abracadabra", "abra", "zzzz");
-      m_procedures[m_curProc] = Regex.Replace(m_procedures[m_curProc], "push (...)\r\npop \\1\r\n", "");
+      m_procedures[m_curProc] = Regex.Replace(m_procedures[m_curProc], "push (.*)\r\npop \\1\r\n", "");
       using (StreamWriter sw = new StreamWriter(m_curProc + CODE_FILE_EXTENSION))
         sw.Write(m_procedures[m_curProc]);
       m_procedures.Remove(m_curProc);
+
+      m_curProc = MAIN_PROC_NAME;//As we leave a procedure, return to the main scope
     }
 
     /// <summary>
@@ -206,12 +207,13 @@ namespace kompiler {
 
         // link the files to create the executable
         + "link.exe /subsystem:console " + projectName + ".obj" + "\r\n"
-        + "@ PAUSE\r\n"
+        //+ "@ PAUSE\r\n"
         + projectName + ".exe\r\n"
 
          // add a pause, so we can see the results of the assembly and linking
           // Thanks to John Broere 2002 !
-        + "@ PAUSE");
+        + "@ PAUSE"
+        );
     }
   }
 }

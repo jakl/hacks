@@ -11,10 +11,7 @@ namespace kompiler {
   class Facade {
     Lexer m_lexer = Lexer.GetLexer();
     Parser m_parser = Parser.GetParser();
-    private string m_errors;
-    public bool m_comments;
-    private string m_tokenDump;
-    private string m_assemblyDump;
+    private string m_errors, m_tokenDump, m_assemblyDump, m_symbolDump;
 
     public string AssemblyDump {
       get { return m_assemblyDump; }
@@ -22,6 +19,10 @@ namespace kompiler {
 
     public string TokenDump {
       get { return m_tokenDump; }
+    }
+
+    public string SymbolDump {
+      get { return m_symbolDump; }
     }
 
     /// <summary>
@@ -70,12 +71,8 @@ namespace kompiler {
 
       m_tokenDump = "Cnt Line Type                                 Lexeme\r\n";
       int count = 0;
-      foreach (Token t in m_lexer.Tokens) {
-        if (t.m_tokType != Token.TOKENTYPE.COMMENT)
-          m_tokenDump += count++ + "  " + t.ToString() + "\r\n";
-        else if(m_comments)
-          m_tokenDump += count++ + "  " + t.ToString() + "\r\n";
-      }
+      foreach (Token t in m_lexer.Tokens)
+        m_tokenDump += count++ + "  " + t.ToString() + "\r\n";
 
       return successLexing;
     }
@@ -97,6 +94,7 @@ namespace kompiler {
         m_errors += '\n' + e.Message;
         return false;
       } finally {
+        m_symbolDump = m_parser.SymbolDump;
         m_parser.Close();
       }
       m_errors += "\nNo Errors Parsing";

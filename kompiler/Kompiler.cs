@@ -7,31 +7,6 @@
  * Input: Everything is documented through the GUI. In general, paste code in the big text box.
  * Output: Again, everything is documented in the GUI.
  * Assumptions: Those who want to test my program will reboot into some edition of Microsoft Windows (for now)
- * 
- * Summary of Tests conducted:
- * 
- * When the Test Symbols button is clicked, the method symbolsbtn_Click is called and this happens:
- * I add several variables to my symbols handler, assign them values, change the scope around, and dump
- * all the data from the symbols handler to prove that the variables were handled correctly.
- * 
- * It does something to the effect of:
- * 
- * int x=42
- * int y=443
- * 
- * {  //nesting
- * 
- *   y=22
- *   string x = "twenty one"
- *   
- *   { //nesting
- *     string tempscope = "going to evaporate on unnest"
- *   } //unnesting
- *   
- *   x = "fourty two"
- *   
- * DUMP DATA
- *   
  
   Copyright 2011 James Koval
   License GPLv3+: GNU GPL version 3 or later
@@ -103,7 +78,6 @@ namespace kompiler {
     }
 
     private void parsebtn_Click(object sender, EventArgs e) {
-      facade.m_comments = commentcheck.Checked;
       if(m_filePath == null)
         facade.parse(codebox.Text, "unnamed");
       else
@@ -111,6 +85,7 @@ namespace kompiler {
       tokensbox.Text = facade.TokenDump;
       errorbox.Text = facade.Errors;
       assemblybox.Text = facade.AssemblyDump;//Make the main procedure viewable
+      symbolbox.Text = facade.SymbolDump;
     }
   }
 }

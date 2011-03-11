@@ -39,16 +39,18 @@
           this.assemblybox = new System.Windows.Forms.RichTextBox();
           this.tokenstab = new System.Windows.Forms.TabPage();
           this.tokensbox = new System.Windows.Forms.RichTextBox();
+          this.symbolstab = new System.Windows.Forms.TabPage();
+          this.symbolbox = new System.Windows.Forms.RichTextBox();
           this.errorstab = new System.Windows.Forms.TabPage();
           this.errorbox = new System.Windows.Forms.RichTextBox();
           this.notetab = new System.Windows.Forms.TabPage();
           this.notebox = new System.Windows.Forms.RichTextBox();
           this.parsebtn = new System.Windows.Forms.Button();
-          this.commentcheck = new System.Windows.Forms.CheckBox();
           this.lineNumbers_For_RichTextBox1 = new LineNumbers.LineNumbers_For_RichTextBox();
           this.tabs.SuspendLayout();
           this.assemblytab.SuspendLayout();
           this.tokenstab.SuspendLayout();
+          this.symbolstab.SuspendLayout();
           this.errorstab.SuspendLayout();
           this.notetab.SuspendLayout();
           this.SuspendLayout();
@@ -112,6 +114,7 @@
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.tabs.Controls.Add(this.assemblytab);
           this.tabs.Controls.Add(this.tokenstab);
+          this.tabs.Controls.Add(this.symbolstab);
           this.tabs.Controls.Add(this.errorstab);
           this.tabs.Controls.Add(this.notetab);
           this.tabs.Location = new System.Drawing.Point(12, 354);
@@ -163,6 +166,25 @@
           this.tokensbox.TabIndex = 0;
           this.tokensbox.Text = "No tokens yet lexed... maybe you want to click Lex";
           // 
+          // symbolstab
+          // 
+          this.symbolstab.Controls.Add(this.symbolbox);
+          this.symbolstab.Location = new System.Drawing.Point(4, 22);
+          this.symbolstab.Name = "symbolstab";
+          this.symbolstab.Size = new System.Drawing.Size(711, 209);
+          this.symbolstab.TabIndex = 5;
+          this.symbolstab.Text = "Symbols";
+          this.symbolstab.UseVisualStyleBackColor = true;
+          // 
+          // symbolbox
+          // 
+          this.symbolbox.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+          this.symbolbox.Location = new System.Drawing.Point(3, 3);
+          this.symbolbox.Name = "symbolbox";
+          this.symbolbox.Size = new System.Drawing.Size(707, 205);
+          this.symbolbox.TabIndex = 0;
+          this.symbolbox.Text = "";
+          // 
           // errorstab
           // 
           this.errorstab.Controls.Add(this.errorbox);
@@ -211,24 +233,13 @@
           this.parsebtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
           this.parsebtn.Font = new System.Drawing.Font("Comic Sans MS", 15.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
           this.parsebtn.ForeColor = System.Drawing.SystemColors.ControlText;
-          this.parsebtn.Location = new System.Drawing.Point(529, 12);
+          this.parsebtn.Location = new System.Drawing.Point(610, 12);
           this.parsebtn.Name = "parsebtn";
           this.parsebtn.Size = new System.Drawing.Size(121, 44);
           this.parsebtn.TabIndex = 6;
           this.parsebtn.Text = "Parse";
           this.parsebtn.UseVisualStyleBackColor = true;
           this.parsebtn.Click += new System.EventHandler(this.parsebtn_Click);
-          // 
-          // commentcheck
-          // 
-          this.commentcheck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.commentcheck.AutoSize = true;
-          this.commentcheck.Location = new System.Drawing.Point(656, 12);
-          this.commentcheck.Name = "commentcheck";
-          this.commentcheck.Size = new System.Drawing.Size(75, 17);
-          this.commentcheck.TabIndex = 10;
-          this.commentcheck.Text = "Comments";
-          this.commentcheck.UseVisualStyleBackColor = true;
           // 
           // lineNumbers_For_RichTextBox1
           // 
@@ -273,7 +284,6 @@
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
           this.ClientSize = new System.Drawing.Size(743, 601);
           this.Controls.Add(this.lineNumbers_For_RichTextBox1);
-          this.Controls.Add(this.commentcheck);
           this.Controls.Add(this.parsebtn);
           this.Controls.Add(this.tabs);
           this.Controls.Add(this.saveasbtn);
@@ -287,10 +297,10 @@
           this.tabs.ResumeLayout(false);
           this.assemblytab.ResumeLayout(false);
           this.tokenstab.ResumeLayout(false);
+          this.symbolstab.ResumeLayout(false);
           this.errorstab.ResumeLayout(false);
           this.notetab.ResumeLayout(false);
           this.ResumeLayout(false);
-          this.PerformLayout();
 
         }
 
@@ -309,10 +319,11 @@
         private System.Windows.Forms.RichTextBox errorbox;
         private System.Windows.Forms.TabPage notetab;
         private System.Windows.Forms.RichTextBox notebox;
-        private System.Windows.Forms.CheckBox commentcheck;
         private System.Windows.Forms.TabPage assemblytab;
         private System.Windows.Forms.RichTextBox assemblybox;
         private LineNumbers.LineNumbers_For_RichTextBox lineNumbers_For_RichTextBox1;
+        private System.Windows.Forms.TabPage symbolstab;
+        private System.Windows.Forms.RichTextBox symbolbox;
     }
 }
 

@@ -5,54 +5,22 @@ using System.Text;
 
 namespace kompiler {
   class Attribute {
-
     public const int INTEGER_SIZE = 4;
 
-    //The category of an identifier/variable
-    public enum CATEGORY {
-      //leaving unused categories out of the picture until needed
-      CONST, VAR//, PROC, TYPE 
-    }
-
-    //The type of a variable/identifier
-    public enum TYPE {
-      //leaving unused types out of the picture until needed
-      INTEGER//, REAL, STRING, CHAR, CARDINAL
-    }
-
-    public CATEGORY m_category;
-    public TYPE m_type;
-    public object m_value;
-    public int m_offset;
+    /// <summary>
+    /// Get the stack memory used by this item. 
+    /// Only AttrVar items consume memory. 
+    /// Only AttrVar items with a specific type consume anything other than 4 bytes. 
+    /// </summary>
     public int Mem {
       get {
-        switch (m_type) {
-          case TYPE.INTEGER: 
-            //constants take up no memory on the stack; ignore them
-            if(m_category != CATEGORY.CONST)
-              return INTEGER_SIZE;
-            break;
-        }
-        return 0;
+        if (!(this is AttrVar))//Not on the stack, thus consuming zero memory
+          return 0;
+        AttrType type = ((AttrVar)this).m_type;
+        if (type == null)
+          return INTEGER_SIZE;
+        return (type.m_endIndex - type.m_startIndex + 1) * INTEGER_SIZE;
       }
-    }
-
-    //dump the instanced data members to a string
-    public override string ToString() {
-      string ret = m_category.ToString() + " " + m_type.ToString() + " ";
-      if (m_value is int)
-        ret += (int)m_value;
-      else if (m_value is string)
-        ret += (string)m_value;
-      return ret;
-    }
-
-
-    public Attribute(CATEGORY cat, TYPE type, int offset, object value) {
-      m_category = cat;
-      m_type = type;
-      m_offset = offset;
-      m_value = value;
     }
   }
 }
