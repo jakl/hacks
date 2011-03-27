@@ -113,20 +113,58 @@ namespace kompiler {
       fw.Add("mov [ebp+" + offset + "], eax");
     }
 
-
-    //This function is not yet used since multiple procedures aren't implemented
-    //The main procedure is created by default by the constructors
     /// <summary>
-    /// PRE:  The name of the procedure is passed. We have already called 
-    ///    EnterNewProcScope which tracks the current scope number. Note that this
-    ///    array of procedure strings must remain parallel to the array of procedures
-    ///    maintained by SymbolTable.
-    /// POST: The preamble is emitted. This includes creating the assembly string
-    ///    and increasing the procedure index.
+    /// Assign the value of the 4 bytes at the address of ecx
+    /// to the value of the top 4 bytes of the stack. Pop the stack for 4 bytes.
     /// </summary>
-    //public void ProcPreamble(string strProcName) {
-    //  m_curProc = strProcName;
-    //}
+    public void SetInt() {
+      fw.Add("pop eax");
+      fw.Add("mov [ecx], eax");
+    }
+
+    /// <summary>
+    /// PRE: index is on the top of the stack
+    /// POST: Calculates the address of an array element, storing it in ecx
+    /// This is the equation: [ebp + offset + (index-startIndex)*typeSize]
+    /// </summary>
+    /// <param name="offset"></param>
+    /// <param name="startIndex"></param>
+    /// <param name="typeSize"></param>
+    public void FindArrayOffset(int offset, int startIndex) {
+      fw.Add("pop eax ;\tStore array index in eax");//holding index
+      fw.Add("sub eax,"+startIndex);
+      fw.Add("imul eax," + Attribute.INTEGER_SIZE);
+      fw.Add("add eax,ebp");
+      fw.Add("add eax," + offset);
+      fw.Add("mov ecx, eax ;\tfinish calculation of array element address and store in ecx");//save the offset in ecx
+    }
+
+    /// <summary>
+    /// Pre: Index into an array is on the top of the stack
+    /// POST: Value at the index in the array is on the top of the stack instead
+    /// </summary>
+    /// <param name="offset"></param>
+    /// <param name="startIndex"></param>
+    /// <param name="typeSize"></param>
+    public void PushArrayVar(int offset, int startIndex) {
+      fw.Add("pop eax ;\tFind and push value of an array element");//holding index
+      fw.Add("sub eax," + startIndex);
+      fw.Add("imul eax," + Attribute.INTEGER_SIZE);
+      fw.Add("add eax,ebp");
+      fw.Add("add eax," + offset);
+      fw.Add("push [eax] ;\tpush the value");//save the offset on the top of the stack
+    }
+
+
+    /// <summary>
+    /// PRE:  The name of the procedure is passed.
+    ///       Know that the main procedure is created by default by the constructors
+    /// POST: The preamble is emitted. This includes creating the assembly code for the
+    /// prototype, procedure include, and procedure declaration
+    /// </summary>
+    public void NewProcedure(string name) {
+      fw.NewProcedure(name);
+    }
 
     /// <summary>
     /// PRE:  The name of the procedure and 
@@ -141,6 +179,10 @@ namespace kompiler {
     /// </summary>
     public void ProcPostamble(int memUse) {
       fw.EndProcedure(memUse);
+    }
+
+    public void ProcCall(string name) {
+      fw.Add("invoke " + name);
     }
 
 

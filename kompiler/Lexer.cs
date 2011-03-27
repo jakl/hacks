@@ -139,8 +139,10 @@ namespace kompiler {
             value = value.Substring(1, value.Length - 3);//delete the last char, don't include ""
             m_index--;//decrement the index to reparse the last char
           }
-
-          m_tokens.Add(new Token(kvp.Key, value, m_lineNumber));
+          
+          //for now, ignore all comments
+          if(kvp.Key != Token.TOKENTYPE.COMMENT)
+            m_tokens.Add(new Token(kvp.Key, value, m_lineNumber));
           m_lineNumber += value.Split('\n').Length - 1;//find all the newlines in the match
           return true;
         }

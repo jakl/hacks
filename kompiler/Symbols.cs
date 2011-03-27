@@ -7,12 +7,11 @@ using System.Collections;
 namespace kompiler {
   class Symbols {
     //A stack of variable tables, where the variable name is a hash key to its attributes
-    Stack<Dictionary<string, Attribute>> m_scopes = new Stack<Dictionary<string,Attribute>>();
+    Stack<Scope> m_scopes = new Stack<Scope>();
 
-    //A stack of variables that will be added during the next comit()
-    Dictionary<string, object> m_incomplete_vars = new Dictionary<string, object>();
-
-    Attribute.CATEGORY m_cat;//track the current category when defining multiple variables
+    //A list of variables that will be added during the next comit()
+    List<string> m_Vars = new List<string>();
+    Dictionary<string, int> m_Consts = new Dictionary<string, int>();
 
     //consider this exerpt from All.mod :
     //VAR k, m : INTEGER ;  //k and m are both of category VAR
@@ -30,7 +29,7 @@ namespace kompiler {
     // Instead of a constructor, we offer a static method to return the only
     //    instance.
     private Symbols() { // private constructor so no one else can create one.
-      m_scopes.Push(new Dictionary<string, Attribute>());//default global scope
+      m_scopes.Push(new Scope());//default global scope
     }
 
     static public Symbols GetSymbols() {
@@ -50,9 +49,10 @@ namespace kompiler {
     /// Initialize symbol system for fresh use
     /// </summary>
     public void init() {
-      m_scopes = new Stack<Dictionary<string, Attribute>>();
-      m_scopes.Push(new Dictionary<string, Attribute>());
-      m_incomplete_vars = new Dictionary<string, object>();
+      m_scopes = new Stack<Scope>();
+      m_scopes.Push(new Scope());
+      m_Vars = new List<string>();
+      m_Consts = new Dictionary<string, int>();
     }
 
     /// <summary>
@@ -60,10 +60,7 @@ namespace kompiler {
     /// </summary>
     public int Mem {
       get {
-        int i = 0;
-        foreach (KeyValuePair<string, Attribute> var in m_scopes.Peek())
-          i += var.Value.Mem;
-        return i;
+        return m_scopes.Peek().m_offset-4;
       }
     }
 
@@ -71,9 +68,7 @@ namespace kompiler {
     /// Create a new scope
     /// </summary>
     public void nest() {
-      m_scopes.Push(new Dictionary<string, Attribute>());
-      //for each new scope there is probably a new procedure call, which means a fresh stack
-      // we want to start with a fresh offset for our fresh stack
+      m_scopes.Push(new Scope());
     }
 
     /// <summary>
@@ -84,16 +79,47 @@ namespace kompiler {
     }
 
     /// <summary>
-    /// Get the Attribute for a variable, by name, in the nearest scope possible
+    /// Add an array type to the current scope, to be used as a possible type of future variables.
+    /// Note: Not that great of an idea. This needs to be subclassed and organized so variables can have more dynamic types
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="startIndex"></param>
+    /// <param name="endIndex"></param>
+    /// <param name="type"></param>
+    public void addType(string name, int startIndex, int endIndex) {
+      //Attribute type is always integer for now
+      m_scopes.Peek().set(name, new AttrType(startIndex, endIndex));
+    }
+
+    /// <summary>
+    /// Get a non-var attribute, by name, in the nearest scope possible
     /// If no variable is named such, return null
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
     public Attribute get(string name) {
-      foreach(Dictionary<string, Attribute> scope in m_scopes)
-        if (scope.ContainsKey(name))
-          return scope[name];
+      foreach (Scope scope in m_scopes)
+        if (scope.contains(name))
+          return scope.get(name);
       return null;
+    }
+
+    /// <summary>
+    /// Get the Attribute for a variable, by name, in the nearest scope possible. 
+    /// If no variable is named such, return null. 
+    /// It may be nested, in which case the nestedOffset will have the proper offset to add to the 
+    /// normal variable's own offset within its own scope
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public int getOffset(string name) {
+      int nestedOffset = 0;
+      foreach (Scope scope in m_scopes) {
+        if (scope.contains(name))
+          return ((AttrVar)scope.get(name)).m_offset + nestedOffset;
+        nestedOffset += scope.m_offset;
+      }
+      return nestedOffset;
     }
 
     /// <summary>
@@ -103,65 +129,70 @@ namespace kompiler {
     public override string ToString() {
       string dump = "";
       int i = m_scopes.Count;
-      foreach (Dictionary<string, Attribute> scope in m_scopes) {
-        dump += "\nScope " + --i;
-        foreach (KeyValuePair<string, Attribute> var in scope)
-          dump += "\n" + var.Key + ": " + var.Value.ToString();
+      foreach (Scope scope in m_scopes) {
+        dump += "Scope " + --i + " using " + (scope.m_offset-4) + " bytes of memory for variables\r\n";
+        foreach (KeyValuePair<string, Attribute> var in scope.m_attrs)
+          dump += var.Key + ": \t\t\t" + var.Value.ToString() + "\r\n";
       }
       return dump;
     }
 
     /// <summary>
-    /// Cache a variable's name, until the type is known, at which point call setType(VAR_TYPE)
-    /// The most recent call to setCat(ID_CAT) will be used for the variable's category
-    /// Value will default to null
+    /// Cache a variable's name, until the type is known, at which point call commit
     /// </summary>
     /// <param name="name"></param>
-    /// <param name="cat"></param>
     public void add(string name) {
-      m_incomplete_vars.Add(name, null);
+      m_Vars.Add(name);
     }
 
     /// <summary>
-    /// Cache a variable's name and value, until the type is known, at which point call setType(VAR_TYPE)
-    /// The most recent call to setCat(ID_CAT) will be used for the variable's category
+    /// Cache a constant until a commit call to commit all cached constants
     /// </summary>
     /// <param name="name"></param>
     /// <param name="value"></param>
-    public void add(string name, object value) {
-      m_incomplete_vars.Add(name, value);
+    public void add(string name, int value) {
+      m_Consts.Add(name, value);
     }
 
     /// <summary>
     /// When a type is declared after any number of variables have been added,
-    /// set all cached variables to that type and add to the current scope
+    /// set all cached variables to that type and add them to the current scope. 
+    /// The type is always an array. 
     /// Clear the cached variables afterwards
     /// </summary>
     /// <param name="type"></param>
-    public void commitType(Attribute.TYPE type) {
-      //the IP register is saved automagically by the assembly instruction, "call"
-      //the BP register is backed-up by us, to be used fresh, and restored later
-      const int INITIAL_OFFSET_DUE_TO_IP_AND_BP = 4;
-      int offset = INITIAL_OFFSET_DUE_TO_IP_AND_BP;
-      int increment = 0;
-      switch (type) {
-        case Attribute.TYPE.INTEGER: increment = Attribute.INTEGER_SIZE;
-          break;
+    public void commitTypedVar(AttrType type) {
+      Scope curScope = m_scopes.Peek();
+
+      //Add variables by name mapped to their attribute to the top hashmap of a stack of hashes
+      foreach (String var in m_Vars) {
+        curScope.set(var, new AttrVar(curScope.m_offset, type));
+
+        //make room on the stack for this array
+        curScope.m_offset += Attribute.INTEGER_SIZE * (type.m_endIndex - type.m_startIndex + 1);
       }
-      foreach (KeyValuePair<string, object> var in m_incomplete_vars) {
-        //Add a variable by name mapped to its attribute to the top hashmap of a stack of hashes
-        m_scopes.Peek()[var.Key] = new Attribute(m_cat, type, offset, var.Value);
-        offset += increment;
-      }
-      m_incomplete_vars.Clear();
+      m_Vars.Clear();//clear the cached variables
     }
 
     /// <summary>
-    /// Set the category for the following variables that will be added
+    /// When finished declaring variable or constant integers, add them to the current scope
+    /// Clear the cached variables afterwards
     /// </summary>
-    /// <param name="cat"></param>
-    public void beginCategory(Attribute.CATEGORY cat){
-      m_cat = cat;
+    /// <param name="type"></param>
+    public void commit() {
+      Scope curScope = m_scopes.Peek();
+
+      //Add variables by name mapped to their attribute to the top hashmap of a stack of hashes
+      foreach (KeyValuePair<string, int> constant in m_Consts)
+        //Add the constant
+        curScope.set(constant.Key, new AttrConst(constant.Value));
+      foreach (String var in m_Vars)
+        //Add the var and increment the stack by 4
+        curScope.set(var, new AttrVar(curScope.m_offset += Attribute.INTEGER_SIZE));
+
+      //clear any cached variables or constants
+      m_Vars.Clear();
+      m_Consts.Clear();
     }
 
     /// <summary>
@@ -170,10 +201,10 @@ namespace kompiler {
     /// </summary>
     /// <param name="name"></param>
     /// <param name="value"></param>
-    public void setVal(string name, object value) {
-      foreach (Dictionary<string, Attribute> scope in m_scopes)
-        if (scope.ContainsKey(name)) {
-          scope[name].m_value = value;
+    public void setVal(string name, int value) {
+      foreach (Scope scope in m_scopes)
+        if (scope.contains(name)) {
+          try { ((AttrConst)scope.get(name)).m_value = value; } catch { }
           break;
         }
     }
