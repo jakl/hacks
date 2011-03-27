@@ -1,0 +1,74 @@
+NAME
+  Blocks
+
+USAGE
+  ./blocks.pl [ --term=<str>|--match|--no-match|--data=<str>|--delim=<str> LOCAL_FILE ]
+
+DESCRIPTION
+  Use to parse files composed of regular blocks of text
+
+OPTIONS
+  --term      -t  : Term to search for
+  --match     -m  : Match the term
+  --no-match -nom : Match all but the term; inverted match
+  --delim     -de : Delimit the blocks of text by this header line (REQUIRED)
+                       delimiter header line is included in the block
+  --data      -da : Find and print only this bit of data (regex formatted)
+
+  Option names may be shorter unique abbreviations of the full names shown above
+  Full or abbreviated options may be preceded by one - or two -- dashes
+
+EXAMPLES
+  We are looking at a log file of computers identified by their ip addresses
+  It might look like this:
+
+    IP-ADDRESS 10.10.10.10
+    OS: xp
+    VULNS: Isn't running free software
+    IP-ADDRESS 42.42.42.42
+    OS: linux
+    VULNS: None
+    IP-ADDRESS 1.2.3.4
+    OS: mac
+    VULNS: High risk of social engineering through confident users
+
+  Each computer has its operating system defined, xp, vista, ubuntu
+  Each computer has a list of secuirty holes like: VULNS: Default SSH Port, No pass
+
+
+  We want to list the security holes of computers that aren't running xp
+
+  ./blocks.pl --term xp --no-match --delim IP-ADDRESS --data 'VULNS:(.*)'
+    None
+    High risk of social engineering through confident users
+
+
+  We want to list the blocks of text associated with computers that aren't running xp
+
+  ./blocks.pl --term xp --no-match --delim IP-ADDRESS trialfile
+    IP-ADDRESS 42.42.42.42
+    OS: linux
+    VULNS: None
+    IP-ADDRESS 1.2.3.4
+    OS: mac
+    VULNS: High risk of social engineering through confident users
+
+    
+  We want to list the ips from each block of text
+
+  ./blocks.pl --delim IP-ADDRESS --data 'IP-ADDRESS (.*)' trialfile
+    10.10.10.10
+    42.42.42.42
+    1.2.3.4
+
+
+AUTHOR
+  Written by James Koval
+REPORTING BUGS
+  Report bugs to <jediknight304 () gmail . com>
+COPYRIGHT
+  Copyright 2010 James Koval
+  License GPLv3+: GNU GPL version 3 or later
+  <http://gnu.org/licenses/gpl.html>
+  This is free software; you are free to change and redistribute it
+  There is NO WARRANTY, to the extent permitted by law
