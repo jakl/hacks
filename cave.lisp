@@ -13,21 +13,30 @@
 
 (defun init ()
 "Initialize the caves"
-  ;Uncomment this block for a slightly more interested cave system
-  ;(cave 0 :children '(3 2 1) :att 'start)
-  ;(cave 1 :children '(4 3 2))
-  ;(cave 2 :children '(4 3 2))
-  ;(cave 3 :children '(4 5))
-  ;(cave 4 :children '(42))
-  ;(cave 5 :children '(42 33))
-  ;(cave 33 :children '(5))
-  ;(cave 42 :att 'end)
-
-  ;Comment this block to rid the program of a boring cave system
-  (cave 'a :children '(b c) :att 'start)
-  (cave 'b :children '(z))
-  (cave 'c :children '(z))
-  (cave 'z :att 'end))
+  (cave 'start :children '(e a c b) :att 'start)
+  (cave 'e :children '(start h a g))
+  (cave 'a :children '(start f e))
+  (cave 'c :children '(start n d))
+  (cave 'b :children '(start j))
+  (cave 'h :children '(e))
+  (cave 'g :children '(troll-gi))
+  (cave 'f :children '(a pit-fil))
+  (cave 'n :children '(pit-jiln troll-pit))
+  (cave 'd :children '(food-pit))
+  (cave 'j :children '(food-start k pit-jiln))
+  (cave 'troll-gi :children '(g i) :att 'troll)
+  (cave 'pit-fil :children '(f i l) :att 'pit)
+  (cave 'pit-jiln :children '(j i l n) :att 'pit)
+  (cave 'troll-pit :children '(pit-jiln n) :att 'troll)
+  (cave 'food-pit :children '(pit-treasure) :att 'food)
+  (cave 'food-start :children '(start f k) :att 'food)
+  (cave 'k :children '(food-start j))
+  (cave 'i :children '(pit-fil treasure pit-jiln))
+  (cave 'l :children '(pit-fil pit-jiln m))
+  (cave 'pit-treasure :children '(treasure) :att 'pit)
+  (cave 'treasure :att 'end)
+  (cave 'm :children '(l treasure))
+)
 
 (defun cave (name &key children (att 'harmless))
 "A cave is made of a name: hash key, mapped to a value of this format:
@@ -55,8 +64,20 @@
   (equal (get-att name) 'end))
 
 (defun is-start (name)
-"Return true if this is an end cave, otherwise false"
+"Return true if this is a start cave, otherwise false"
   (equal (get-att name) 'start))
+
+(defun is-troll-free (name)
+"Return true if this is a troll cave, otherwise false"
+  (not (equal (get-att name) 'troll)))
+
+(defun has-food (name)
+"Return true if this is a food cave, otherwise false"
+  (equal (get-att name) 'food))
+
+(defun has-pit (name)
+"Return true if this is a pit, otherwise false"
+  (equal (get-att name) 'pit))
 
 (defun is-unexplored (name)
 "Return true if this is an unexplored cave"
@@ -95,15 +116,14 @@
       (return-from get-start (list name)))))
 
 (defun explore (name)
-"Set a cave to explored and return its unexplored children
-Also delete children from it that were previously explored"
+"Set a cave to explored and return its unexplored children"
   (set-info name 'explored)
 
   (setf unexplored nil);a variable to save unexplored children
 
   (loop for child in (get-children name) do
 
-    (when (is-unexplored child) 
+    (when (and (is-unexplored child) (is-troll-free child))
       ;when a child is unexplored, set it to explored
       ;and save it in the variable unexplored to return later
       (push child unexplored) 
@@ -112,8 +132,8 @@ Also delete children from it that were previously explored"
   unexplored)
 
 (defun breadth-first ()
-"Perform a breadth-first search and return the path taken to find an end cave
-Currently this function returns the end cave, rather than the path taken"
+"Perform a breadth-first search and return the end cave, modifying
+  the hashtable parents to record the path"
   (setf q (get-start)) ;q is a queue of caves to search in FIFO
   (loop for name in q do
     (print "Head of q is")(print name)
@@ -132,10 +152,15 @@ Currently this function returns the end cave, rather than the path taken"
 
 (defun find-path (end)
 "Finds the path going up the tree to the start cave from the end cave"
+  (when (equal end nil) (return-from find-path "No path found"))
+  (setf food 5)
   (setf path (list end))
   (setf cur end)
   (loop
-    (when (is-start cur) (return-from find-path path))
+    (when (is-start cur) (return-from find-path (list path food)))
+    (when (has-food cur) (incf food 5))
+    (when (has-pit cur) (decf food 5))
+    (decf food)
     (setf cur (gethash cur parents))
     (push cur path)))
 
@@ -153,8 +178,12 @@ Currently this function returns the end cave, rather than the path taken"
   (print "Caves are formated like this: name ((children) attribute (un)explored)")
   (print "Caves were")(print-all-caves)
 
-  ;Print path taken
-  (print "Path was")(print (find-path end))
+  ;Calculate and Print path taken
+  (setf path-and-food (find-path end))
+  (setf path (first path-and-food))
+  (setf food (second path-and-food));is there a way to shorten this?
+  (print "Path was")(print path)
+  (print "Food at the end was")(print food)
 
   ;wait for user input at the end rather than auto-quiting
   (read-line))
