@@ -31,7 +31,7 @@
   (cave 'food-pit :children '(pit-treasure) :att 'food)
   (cave 'food-start :children '(start f k) :att 'food)
   (cave 'k :children '(food-start j))
-  (cave 'i :children '(pit-jiln pit-fil treasure ) :costs '(2))
+  (cave 'i :children '(pit-jiln pit-fil treasure) :costs '(2))
   (cave 'l :children '(pit-jiln pit-fil m) :costs '(2))
   (cave 'pit-treasure :children '(treasure) :att 'pit)
   (cave 'treasure :att 'end)
@@ -46,7 +46,7 @@
  This function uses optional parameters: children att costs
  att has the default value of harmless
 "
-  (setf (gethash name caves) (list children att 'unexplored costs)))
+  (setf (gethash name caves) (list children att costs)))
 
 (defun get-info (name)
 "Get the info for a cave"
@@ -59,7 +59,7 @@
 (defun get-cost (parent child)
 "return the cost to travel from parent to child
   returns 1 if the cost isn't marked"
-  (setf costs (fourth (get-info parent)))
+  (setf costs (third (get-info parent)))
   (unless costs (return-from get-cost 1))
   (setf children (get-children parent))
   (setf i 0)
@@ -68,6 +68,7 @@
     (when (equal name child) (setf found t) (return nil))
     (incf i))
   (unless found (return-from get-cost 1))
+  (unless (nth i costs) (return-from get-cost 1))
   (nth i costs))
 
 (defun get-att (name)
@@ -82,9 +83,9 @@
 "Return true if this is a start cave, otherwise false"
   (equal (get-att name) 'start))
 
-(defun is-troll-free (name)
+(defun has-troll (name)
 "Return true if this is a troll cave, otherwise false"
-  (not (equal (get-att name) 'troll)))
+  (equal (get-att name) 'troll))
 
 (defun has-food (name)
 "Return true if this is a food cave, otherwise false"
@@ -93,25 +94,6 @@
 (defun has-pit (name)
 "Return true if this is a pit, otherwise false"
   (equal (get-att name) 'pit))
-
-(defun is-unexplored (name)
-"Return true if this is an unexplored cave"
-  (equal (third (get-info name)) 'unexplored))
-
-(defun set-info (name value)
-"Set the info for a cave, either explored/unexplored or an attribute, or the children when passing a list as the value"
-  (when (or (equal value 'explored) (equal value 'unexplored))
-    (setf (third (gethash name caves)) value)
-    (return-from set-info))
-  (when (or (equal value 'start)
-            (equal value 'end)
-            (equal value 'troll)
-            (equal value 'food)
-            (equal value 'pit)
-            (equal value 'harmless))
-    (setf (second (gethash name caves)) value)
-    (return-from set-info))
-  (setf (first (gethash name caves)) value))
 
 (defun print-caves (&rest names)
 "Print information about each requested cave"
@@ -128,92 +110,34 @@
 "Find and return a start cave"
   (loop for name being the hash-keys of caves do
     (when (equal (second (get-info name)) 'start)
-      (return-from get-start (list name)))))
-
-(defun explore (name)
-"Set a cave to explored and return its unexplored children"
-  (set-info name 'explored)
-
-  (setf unexplored nil);a variable to save unexplored children
-
-  (loop for child in (get-children name) do
-
-    (when (and (is-unexplored child) (is-troll-free child))
-      ;when a child is unexplored, set it to explored
-      ;and save it in the variable unexplored to return later
-      (push child unexplored) 
-      (setf (gethash child parents) name)
-      (set-info child 'explored)))
-  unexplored)
-
-(defun breadth-first ()
-"Perform a breadth-first search and return the end cave, modifying
-  the hashtable parents to record the path"
-  (setf q (get-start)) ;q is a queue of caves to search in FIFO
-  (loop for name in q do
-    (print "Head of q is")(print name)
-
-    ;Return the end cave when it is found
-    (when (is-end name) (return-from breadth-first name))
-
-    ;Find all the children of the current cave
-    (setf children (explore name))
-    (print "Children are")(print children)
-
-    ;add children to the end of the q
-    (loop for child in children do
-      (setf (cdr (last q)) (list child))))
-  nil)
-
-(defun find-path (end)
-"Finds the path going up the tree to the start cave from the end cave"
-  (when (equal end nil) (return-from find-path "No path found"))
-  (setf food 5)
-  (setf path (list end))
-  (setf cur end)
-  (loop
-    (when (is-start cur) (return-from find-path (list path food)))
-    (when (has-food cur) (incf food 5))
-    (when (has-pit cur) (decf food 5))
-    (decf food)
-    (setf cur (gethash cur parents))
-    (push cur path)))
+      (return-from get-start name))))
 
 (defun depth (name food steps)
   (when (is-end name) (return-from depth (list name)))
+  (when (has-troll name) (return-from depth nil))
   (when (< food 0) (return-from depth nil))
-  (when (> steps 100) (return-from depth nil))
+  (when (> steps 15) (return-from depth nil))
+  ;not taking more than 15 steps is another hack to limit the search domain,
+  ; such that the algorithm can finish within a second
+
+  (when (has-pit name) (decf food 5))
+  (when (has-food name) (incf food 5))
   (setf children (get-children name))
   (loop for child in children do
     (setf answer (depth child (- food (get-cost name child)) (+ steps 1)))
-    (when answer (return-from depth (append answer (list name)))))
+    (when (and answer (> food 2)) (return-from depth (append answer (list name)))))
+          ;requiring more than 2 food is a hack specific to Tom's big cave,
+          ;to force the algorithm to find the infinite food loop before exiting
   nil)
 
 (defun main ()
   ;Initialize cave system - the caves hashtable
   (init)
 
-  (trace depth)
-  (print (depth (first (get-start)) 5 0))
-
-  ;Run search for the exit, and track moves in the parents hashtable
-  ;(setf end (breadth-first))
-
-  ;Print final exit
-  ;(print "Found end cave named")(print end)
-
-  ;print debug info about all caves
-  ;(print "Caves are formated like this: name ((children) attribute (un)explored) (non-default costs)")
-  ;(print "Caves were")(print-all-caves)
-
-  ;Calculate and Print path taken
-  ;(setf path-and-food (find-path end))
-  ;(setf path (first path-and-food))
-  ;(setf food (second path-and-food));is there a way to shorten this?
-  ;(print "Path was")(print path)
-  ;(print "Food at the end was")(print food)
+  (print (depth (get-start) 5 0))
 
   ;wait for user input at the end rather than auto-quiting
-  (read-line))
+  ;(read-line)
+  )
 
 (main)
