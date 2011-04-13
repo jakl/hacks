@@ -13,12 +13,12 @@
 
 (defun init ()
 "Initialize the caves"
-  (cave 'start :children '(e a c b) :att 'start)
-  (cave 'e :children '(start h a g))
+  (cave 'start :children '(e a c b) :costs '(2) :att 'start)
+  (cave 'e :children '(start h a g) :costs '(2 2))
   (cave 'a :children '(start f e))
   (cave 'c :children '(start n d))
   (cave 'b :children '(start j))
-  (cave 'h :children '(e))
+  (cave 'h :children '(e) :costs '(2))
   (cave 'g :children '(troll-gi))
   (cave 'f :children '(a pit-fil))
   (cave 'n :children '(pit-jiln troll-pit))
@@ -26,26 +26,27 @@
   (cave 'j :children '(food-start k pit-jiln))
   (cave 'troll-gi :children '(g i) :att 'troll)
   (cave 'pit-fil :children '(f i l) :att 'pit)
-  (cave 'pit-jiln :children '(j i l n) :att 'pit)
+  (cave 'pit-jiln :children '(i l j n) :costs '(2 2) :att 'pit)
   (cave 'troll-pit :children '(pit-jiln n) :att 'troll)
   (cave 'food-pit :children '(pit-treasure) :att 'food)
   (cave 'food-start :children '(start f k) :att 'food)
   (cave 'k :children '(food-start j))
-  (cave 'i :children '(pit-fil treasure pit-jiln))
-  (cave 'l :children '(pit-fil pit-jiln m))
+  (cave 'i :children '(pit-jiln pit-fil treasure ) :costs '(2))
+  (cave 'l :children '(pit-jiln pit-fil m) :costs '(2))
   (cave 'pit-treasure :children '(treasure) :att 'pit)
   (cave 'treasure :att 'end)
   (cave 'm :children '(l treasure))
 )
 
-(defun cave (name &key children (att 'harmless))
+(defun cave (name &key children (att 'harmless) costs)
 "A cave is made of a name: hash key, mapped to a value of this format:
    (children-list of connected cave names)
      start/end/troll/food/pit/harmless-enum    explored/unexplored-enum
- This function uses optional parameters: children and att
+     costs-parallel to children list, containing costs that aren't 1
+ This function uses optional parameters: children att costs
  att has the default value of harmless
 "
-  (setf (gethash name caves) (list children att 'unexplored)))
+  (setf (gethash name caves) (list children att 'unexplored costs)))
 
 (defun get-info (name)
 "Get the info for a cave"
@@ -54,6 +55,20 @@
 (defun get-children (name)
 "return all children of a cave"
   (first (get-info name)))
+
+(defun get-cost (parent child)
+"return the cost to travel from parent to child
+  returns 1 if the cost isn't marked"
+  (setf costs (fourth (get-info parent)))
+  (unless costs (return-from get-cost 1))
+  (setf children (get-children parent))
+  (setf i 0)
+  (setf found nil)
+  (loop for name in children do
+    (when (equal name child) (setf found t) (return nil))
+    (incf i))
+  (unless found (return-from get-cost 1))
+  (nth i costs))
 
 (defun get-att (name)
 "Get the attribute of a cave"
@@ -164,26 +179,39 @@
     (setf cur (gethash cur parents))
     (push cur path)))
 
+(defun depth (name food steps)
+  (when (is-end name) (return-from depth (list name)))
+  (when (< food 0) (return-from depth nil))
+  (when (> steps 100) (return-from depth nil))
+  (setf children (get-children name))
+  (loop for child in children do
+    (setf answer (depth child (- food (get-cost name child)) (+ steps 1)))
+    (when answer (return-from depth (append answer (list name)))))
+  nil)
+
 (defun main ()
   ;Initialize cave system - the caves hashtable
   (init)
 
+  (trace depth)
+  (print (depth (first (get-start)) 5 0))
+
   ;Run search for the exit, and track moves in the parents hashtable
-  (setf end (breadth-first))
+  ;(setf end (breadth-first))
 
   ;Print final exit
-  (print "Found end cave named")(print end)
+  ;(print "Found end cave named")(print end)
 
   ;print debug info about all caves
-  (print "Caves are formated like this: name ((children) attribute (un)explored)")
-  (print "Caves were")(print-all-caves)
+  ;(print "Caves are formated like this: name ((children) attribute (un)explored) (non-default costs)")
+  ;(print "Caves were")(print-all-caves)
 
   ;Calculate and Print path taken
-  (setf path-and-food (find-path end))
-  (setf path (first path-and-food))
-  (setf food (second path-and-food));is there a way to shorten this?
-  (print "Path was")(print path)
-  (print "Food at the end was")(print food)
+  ;(setf path-and-food (find-path end))
+  ;(setf path (first path-and-food))
+  ;(setf food (second path-and-food));is there a way to shorten this?
+  ;(print "Path was")(print path)
+  ;(print "Food at the end was")(print food)
 
   ;wait for user input at the end rather than auto-quiting
   (read-line))
