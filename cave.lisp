@@ -112,11 +112,20 @@
     (when (equal (second (get-info name)) 'start)
       (return-from get-start name))))
 
-(defun depth (name food steps)
+(defun get-food-caves()
+"Find and return names of all the food caves"
+  (setf foods nil)
+  (loop for name being the hash-keys of caves do
+    (when (has-food name) (push name foods)))
+  foods)
+
+;TODO: Food is infinite when nil, target is a cave other than end when set
+(defun depth (name &optional food (steps 0) &key target)
+  (print (list name food steps))
   (when (is-end name) (return-from depth (list name)))
   (when (has-troll name) (return-from depth nil))
   (when (< food 0) (return-from depth nil))
-  (when (> steps 15) (return-from depth nil))
+  (when (> steps 14) (return-from depth nil))
   ;not taking more than 15 steps is another hack to limit the search domain,
   ; such that the algorithm can finish within a second
 
@@ -125,7 +134,7 @@
   (setf children (get-children name))
   (loop for child in children do
     (setf answer (depth child (- food (get-cost name child)) (+ steps 1)))
-    (when (and answer (> food 2)) (return-from depth (append answer (list name)))))
+    (when (and answer (> food 0)) (return-from depth (append answer (list name)))))
           ;requiring more than 2 food is a hack specific to Tom's big cave,
           ;to force the algorithm to find the infinite food loop before exiting
   nil)
@@ -134,10 +143,37 @@
   ;Initialize cave system - the caves hashtable
   (init)
 
-  (print (depth (get-start) 5 0))
+  (setf initial-food 5)
+
+  ;Get the food caves that have loops back to themselves
+  ;These loops must produce more food than they comsume
+  (setf foods (get-food-caves))
+  (setf loop-foods nil)
+  (loop for name in foods do
+    (when (depth name initial-food :target name) (push name loop-foods)))
+
+  ;Find path from start to food
+  (defparameter food-paths (make-hash-table))
+  (loop for name in loop-foods do
+    (when (setf path (depth (get-start) initial-food :target name))
+      (push path (gethash name food-paths))))
+
+  ;Find path from food cave to end. Make this breadth first, or implement explored caves
+  (setf successful-caves nil)
+  (loop for name being the hash-keys of food-paths do
+    (when (setf path (depth name))
+      (push path (gethash name food-paths))
+      (push name successful-caves)))
+
+  (when successful-caves
+    (print "Found infinite food paths")
+    (loop for name in successful-caves do
+      (print (gethash name food-paths))))
+
+  ;(print (depth (get-start) 5 0))
 
   ;wait for user input at the end rather than auto-quiting
   ;(read-line)
-  )
+)
 
 (main)
