@@ -119,13 +119,15 @@
     (when (has-food name) (push name foods)))
   foods)
 
-;TODO: Food is infinite when nil, target is a cave other than end when set
+;TODO: Implement explored portions on a parameter
 (defun depth (name &optional food (steps 0) &key target)
-  (print (list name food steps))
-  (when (is-end name) (return-from depth (list name)))
-  (when (has-troll name) (return-from depth nil))
-  (when (< food 0) (return-from depth nil))
-  (when (> steps 14) (return-from depth nil))
+  (print (list name food steps));debug
+  (when (or (and (equal name target) target) 
+               (and (not (target)) (is-end name))) 
+    (return-from depth (list name)));found treasure
+  (when (has-troll name) (return-from depth nil));death by troll
+  (when food (when (< food 0) (return-from depth nil)));starve
+  (when (> steps 14) (return-from depth nil));exhastiou
   ;not taking more than 15 steps is another hack to limit the search domain,
   ; such that the algorithm can finish within a second
 
@@ -165,12 +167,18 @@
       (push path (gethash name food-paths))
       (push name successful-caves)))
 
-  (when successful-caves
+  (if successful-caves
+    (progn
     (print "Found infinite food paths")
     (loop for name in successful-caves do
       (print (gethash name food-paths))))
-
-  ;(print (depth (get-start) 5 0))
+    ;else
+    (if (setf path (depth (get-start) initial-food))
+      (progn
+      (print "Found normal path")
+      (print path))
+      ;else 
+      (print "No paths found")))
 
   ;wait for user input at the end rather than auto-quiting
   ;(read-line)
