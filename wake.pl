@@ -1,4 +1,13 @@
 #!/usr/bin/perl
+#Copyright 2011 by James Koval
+#License is GNU GPL v3+
+
+#This program takes a single argument in the hour colon minute format
+#       hh:mm
+#It will sleep until that time next occurs, waiting past midnight if need be
+#Then tries to run the ruby script crankvolume found at github.com/jediknight304/hacks
+#This script interfaces with pulseaudio, and can be copied to /usr/local/bin/crankvolume
+
 use warnings;
 use strict;
 
@@ -13,7 +22,7 @@ if($alarmTime =~ /^(\d?\d)[-:.,; ]*(\d\d)?$/){
   $minute = $2 if $2;
 }
 
-die "Bad format of time\n$alarmTime\n" if($hour >= 24 or $hour < 0 or $minute >= 60 or $minute < 0);
+die "Bad format of time\n$alarmTime\nExpecting hh:mm\n" if($hour >= 24 or $hour < 0 or $minute >= 60 or $minute < 0);
 
 #Find the seconds until the alarm should go off
 my $alarmSeconds = `date -d $hour:$minute +%s` - `date +%s`;
