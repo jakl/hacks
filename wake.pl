@@ -10,6 +10,7 @@
 
 use warnings;
 use strict;
+use subs qw(crankvolume);
 
 my $alarmTime = shift;
 $alarmTime = '' unless $alarmTime;
@@ -34,4 +35,13 @@ if($alarmSeconds <= 0){
 }
 printf "Sleeping for %.3f hours, until %d:%02d\n", $alarmSeconds/3600, $hour, $minute;
 `sleep $alarmSeconds`;
-`crankvolume`;
+crankvolume;
+
+#Cranks up the pulse audio system's volume on all devices
+sub crankvolume{
+  my $lastDeviceIndex = $1 if `pacmd list-sinks` =~ /(\d) sink/;
+  for(0..$lastDeviceIndex){
+    `pacmd set-sink-volume $_ 0x20000`;
+    `pacmd set-sink-mute $_ no`;
+  }
+}
