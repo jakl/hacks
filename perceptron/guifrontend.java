@@ -1,9 +1,10 @@
-//JFrame Template
-//author: Alrecenk
-//Don't forget to go to void main to change filename
-//Window width, height are the static integers w, h
-
-//Imports from the JDK library and will be handled by the constructor
+/**
+ * This program, Perceptrons, is meant to show how a computer
+ * can learn to identify patterns in images
+ * 
+ * @author James Koval
+ * License: GNU GPL v3+
+ */
 
 //Allows this class (java code file) to function through a window
 import java.awt.event.WindowEvent;
@@ -19,11 +20,6 @@ import java.awt.Graphics;//The actual canvas that knows how to draw shapes and t
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-//Mouse events
-import java.awt.event.MouseListener;//Knows when mouse does anything
-import java.awt.event.MouseMotionListener;//Fires on mouse movement
-import java.awt.event.MouseEvent;//Knows mouse position
-
 //Basic event and listener for events
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -35,40 +31,34 @@ import java.util.ArrayList;
 
 //JFrame for window menu bar and content
 import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 //Timer for screen refresh rate
 import javax.swing.Timer;
-import javax.swing.filechooser.FileFilter;
 
 @SuppressWarnings("serial")
-public class guifrontend extends JFrame // For a browser Java-Applet instead of
-    // JFrame use 'extends JApplet' and
-    // remove the main function
-    // This class (java code file) will function as a JFrame, an ActionListener,
-    // a MouseListener, etc
-    implements ActionListener, MouseListener, KeyListener, MouseMotionListener {
+public class guifrontend extends JFrame implements ActionListener, KeyListener {
 
   // Variable Declaration Pool
   private Container pane;
   Image offscreen;
   Graphics screen;
   static int w, h;
-  boolean bSpace, bEnter, bBackSpace, bUp, bDown, bLeft, bRight, bW, bS, bA,
-      bD;// Keyboard events
+  boolean bSpace, bEnter, bBackSpace;// Keyboard events
 
   /*
-   * Program Specific variables Not part of TemplateBe as descriptive with
-   * variable names as possible, then think of being conciseWill someone
-   * understand your program if they read it unassisted?
+   * Program Specific variables Not part of Template
    */
 
   perceptron vertical, horizontal, backslash, forwardslash;
   ArrayList<boolean[][]> vertical_inputs = new ArrayList<boolean[][]>(),
       horizontal_inputs = new ArrayList<boolean[][]>(),
       backslash_inputs = new ArrayList<boolean[][]>(),
-      forwardslash_inputs = new ArrayList<boolean[][]>();
+      forwardslash_inputs = new ArrayList<boolean[][]>(),
+      vertical_tests = new ArrayList<boolean[][]>(),
+      forwardslash_tests = new ArrayList<boolean[][]>(),
+      backslash_tests = new ArrayList<boolean[][]>(),
+      horizontal_tests = new ArrayList<boolean[][]>();
 
   /*
    * Function Description init(): Initializes all variables needed to make and
@@ -78,28 +68,16 @@ public class guifrontend extends JFrame // For a browser Java-Applet instead of
     // Variable Initialization Pool setting values
 
     // Screen Width / Height
-    w = 800;
-    h = 800;
+    w = 1000;
+    h = 820;
 
     // User Input through Keyboard
     bSpace = false;
     bEnter = false;
     bBackSpace = false;
-    bUp = false;
-    bDown = false;
-    bLeft = false;
-    bRight = false;
-    bW = false;
-    bS = false;
-    bA = false;
-    bD = false;
 
     // Activating window and listener functionality
     pane = getContentPane();
-    pane.addMouseListener(this);// Add this class to pane as a MouseListener
-    // that pane will fire when it sees the mouse do
-    // something from it's perspective
-    pane.addMouseMotionListener(this);
     pane.addKeyListener(this);
     pane.requestFocus();
 
@@ -109,17 +87,18 @@ public class guifrontend extends JFrame // For a browser Java-Applet instead of
     clock.start();
 
     // Program Specific variables Not part of Template
-    vertical = new perceptron("vertial", 5, 5);
-    horizontal = new perceptron("horizontal", 5, 5);
-    backslash = new perceptron("backslash", 5, 5);
-    forwardslash = new perceptron("forwardslash", 5, 5);
-    
+    vertical = new perceptron("Vertical", 5, 5);
+    horizontal = new perceptron("Horizontal", 5, 5);
+    backslash = new perceptron("Backslash", 5, 5);
+    forwardslash = new perceptron("Forwardslash", 5, 5);
+
+    getTrainingData();
     getTestingData();
 
   }// init
 
   /*
-   * Function Descriptino point(Graphics g): Is called from repaint() and
+   * Function Description point(Graphics g): Is called from repaint() and
    * required for drawing on Graphics objects
    */
   public void paint(Graphics g) {
@@ -145,76 +124,72 @@ public class guifrontend extends JFrame // For a browser Java-Applet instead of
     horizontal.paint(g, weightSize * 6, 0, weightSize);
     backslash.paint(g, 0, weightSize * 6, weightSize);
     forwardslash.paint(g, weightSize * 6, weightSize * 6, weightSize);
+
+    // Display statistics on the right side of the view
+    g.drawString("Learn Rate: "
+        + String.format("%1$.5f", perceptron.LEARN_RATE), weightSize * 12,
+        weightSize);
+
+    // Varity: Amount that something varies
+    g.drawString("Initial Varity: "
+        + String.format("%1$.5f", perceptron.initialWeightVarity),
+        weightSize * 12, weightSize * 2);
+    
+    showControls(g, weightSize * 12, weightSize * 3);
   }// paint2
+  
+  void showControls(Graphics g, int left, int top){
+    int fontHeight = 14;
+    int columnOffset = 85;
+    g.drawString("Enter", left, top + fontHeight);
+    g.drawString("Train", left + columnOffset, top + fontHeight);
+    g.drawString("Space", left, top + fontHeight*2);
+    g.drawString("Test", left+columnOffset, top + fontHeight*2);
+    g.drawString("Backspace", left, top + fontHeight*3);
+    g.drawString("Reset", left+columnOffset, top + fontHeight*3);
+    g.drawString("Up", left, top + fontHeight*4);
+    g.drawString("Rate++", left+columnOffset, top + fontHeight*4);
+    g.drawString("Down", left, top + fontHeight*5);
+    g.drawString("Rate--", left+columnOffset, top + fontHeight*5);
+    g.drawString("Left", left, top + fontHeight*6);
+    g.drawString("Varity--", left+columnOffset, top + fontHeight*6);
+    g.drawString("Right", left, top + fontHeight*7);
+    g.drawString("Varity++", left+columnOffset, top + fontHeight*7);
+  }
 
   /*
    * Function Description actionPerformed(ActionEvent): Fires on timer tick
    */
   public void actionPerformed(ActionEvent e) {
+    pane.requestFocus();//If this window has focus, then set this pane to have focus as well
     KeyboardStrokes();
     repaint();
   }// actionPerformed
 
   /*
    * Function Description KeyboardStrokes(): Up Down Left Right if / else
-   * statements with code bodies for each.if public / private isn't specified it
-   * is assumed private meaning the function can not be accessed from another
-   * class (java code file) which is cleaner and safer
+   * statements with code bodies for each.
    */
   void KeyboardStrokes() {
     if (bSpace) {
-
-    } else {
-
+      for (boolean[][] input : vertical_tests)
+        testVertical(input);
+      for (boolean[][] input : horizontal_tests)
+        testHorizontal(input);
+      for (boolean[][] input : backslash_tests)
+        testBackslash(input);
+      for (boolean[][] input : forwardslash_tests)
+        testForwardslash(input);
     }
     if (bEnter) {
-
-    } else {
-
-    }
-    if (bBackSpace) {
-
-    } else {
-
-    }
-    if (bUp) {
-    } else {
-
-    }
-
-    if (bDown) {
-    } else {
-
-    }
-
-    if (bLeft) {
-    } else {
-
-    }
-
-    if (bRight) {
-    } else {
-
-    }
-    if (bW) {
-
-    } else {
-
-    }
-    if (bS) {
-
-    } else {
-
-    }
-    if (bA) {
-
-    } else {
-
-    }
-    if (bD) {
-
-    } else {
-
+      for (boolean[][] input : vertical_inputs)
+        trainVertical(input);
+      for (boolean[][] input : horizontal_inputs)
+        trainHorizontal(input);
+      for (boolean[][] input : backslash_inputs)
+        trainBackslash(input);
+      for (boolean[][] input : forwardslash_inputs)
+        trainForwardslash(input);
     }
   }// KeyboardStrokes
 
@@ -233,122 +208,49 @@ public class guifrontend extends JFrame // For a browser Java-Applet instead of
     if (t == KeyEvent.VK_BACK_SPACE) {
       bBackSpace = true;
     }
-
-    if (t == KeyEvent.VK_LEFT) {
-      bLeft = true;
-    }
-    if (t == KeyEvent.VK_RIGHT) {
-      bRight = true;
-    }
-    if (t == KeyEvent.VK_UP) {
-      bUp = true;
-    }
-    if (t == KeyEvent.VK_DOWN) {
-      bDown = true;
-    }
-
-    if (t == KeyEvent.VK_A) {
-      bA = true;
-    }
-    if (t == KeyEvent.VK_D) {
-      bD = true;
-    }
-    if (t == KeyEvent.VK_W) {
-      bW = true;
-    }
-    if (t == KeyEvent.VK_S) {
-      bS = true;
-    }
     repaint();
   }// keyPressed
 
   public void keyTyped(KeyEvent e) {
-    char t = e.getKeyChar();
+    // char t = e.getKeyChar();
   }// keyTyped
 
   public void keyReleased(KeyEvent e) {
     int t = e.getKeyCode();
 
     if (t == KeyEvent.VK_SPACE) {
-      vertical.reset();
-      horizontal.reset();
-      backslash.reset();
-      forwardslash.reset();
       bSpace = false;
     }
     if (t == KeyEvent.VK_ENTER) {
       bEnter = false;
     }
     if (t == KeyEvent.VK_BACK_SPACE) {
+      vertical.reset();
+      horizontal.reset();
+      backslash.reset();
+      forwardslash.reset();
       bBackSpace = false;
     }
 
     if (t == KeyEvent.VK_ENTER) {
-      for(boolean[][] input : vertical_inputs)
-        trainVertical(input);
-      for(boolean[][] input : horizontal_inputs)
-        trainHorizontal(input);
-      for(boolean[][] input : backslash_inputs)
-        trainBackslash(input);
-      for(boolean[][] input : forwardslash_inputs)
-        trainForwardslash(input);
+      bEnter = false;
     }
-    if (t == KeyEvent.VK_LEFT) {
-      trainBackslash(getInputsFromPNG());
-      bLeft = false;
+    if (t == KeyEvent.VK_LEFT){
+      perceptron.decreaseInitialVarity();
     }
-    if (t == KeyEvent.VK_RIGHT) {
-      trainForwardslash(getInputsFromPNG());
-      bRight = false;
+    if (t == KeyEvent.VK_RIGHT){
+      perceptron.increaseInitialVarity();
     }
-    if (t == KeyEvent.VK_UP) {
-      trainVertical(getInputsFromPNG());
-      bUp = false;
+    if (t == KeyEvent.VK_UP){
+      perceptron.increaseLearnRate();
     }
-    if (t == KeyEvent.VK_DOWN) {
-      trainHorizontal(getInputsFromPNG());
-      bDown = false;
-    }
-
-    if (t == KeyEvent.VK_A) {
-      bA = false;
-    }
-    if (t == KeyEvent.VK_D) {
-      bD = false;
-    }
-    if (t == KeyEvent.VK_W) {
-      bW = false;
-    }
-    if (t == KeyEvent.VK_S) {
-      bS = false;
+    if (t == KeyEvent.VK_DOWN){
+      perceptron.decreaseLearnRate();
     }
     repaint();
   }// keyReleased
 
-  /*
-   * ##############################Mouse Events##############################
-   */
-  public void mousePressed(MouseEvent e) {
-    pane.requestFocus();
-  }// mousePressed
-
-  public void mouseClicked(MouseEvent e) {
-  }// mouseClicked
-
-  public void mouseReleased(MouseEvent e) {
-  }// mouseReleased
-
-  public void mouseEntered(MouseEvent e) {
-  }// mouseEntered
-
-  public void mouseExited(MouseEvent e) {
-  }// mouseExited
-
-  public void mouseMoved(MouseEvent e) {
-  }// mouseMoved
-
-  public void mouseDragged(MouseEvent e) {
-  }// mouseDragged
+  // **************TRAIN OR TEST EACH PERCEPTRON WITH A SET OF INPUTS**********
 
   void trainVertical(boolean[][] inputs) {
     if (inputs == null)
@@ -386,14 +288,49 @@ public class guifrontend extends JFrame // For a browser Java-Applet instead of
     forwardslash.train(inputs, true);
   }
 
-  boolean[][] getInputsFromPNG() {
-    JFileChooser fd = new JFileChooser(".");
-    int fdStatus = fd.showOpenDialog(null);
-    if (fdStatus == JFileChooser.APPROVE_OPTION)
-      return getGrayscaleData(new File(fd.getSelectedFile().getPath()));
-    return null;
+  void testVertical(boolean[][] inputs) {
+    if (inputs == null)
+      return;
+    vertical.test(inputs, true);
+    horizontal.test(inputs, false);
+    backslash.test(inputs, false);
+    forwardslash.test(inputs, false);
   }
 
+  void testHorizontal(boolean[][] inputs) {
+    if (inputs == null)
+      return;
+    vertical.test(inputs, false);
+    horizontal.test(inputs, true);
+    backslash.test(inputs, false);
+    forwardslash.test(inputs, false);
+  }
+
+  void testBackslash(boolean[][] inputs) {
+    if (inputs == null)
+      return;
+    vertical.test(inputs, false);
+    horizontal.test(inputs, false);
+    backslash.test(inputs, true);
+    forwardslash.test(inputs, false);
+  }
+
+  void testForwardslash(boolean[][] inputs) {
+    if (inputs == null)
+      return;
+    vertical.test(inputs, false);
+    horizontal.test(inputs, false);
+    backslash.test(inputs, false);
+    forwardslash.test(inputs, true);
+  }
+
+  /**
+   * Open a png image file and save it to memory in a 2d boolean array Pixels
+   * that are closer to black will be true. Pixels closer to white are false
+   * 
+   * @param file
+   * @return
+   */
   boolean[][] getGrayscaleData(File file) {
     BufferedImage img = null;
     try {
@@ -410,15 +347,29 @@ public class guifrontend extends JFrame // For a browser Java-Applet instead of
         int red = (pixel >> 16) & 0xff;
         int green = (pixel >> 8) & 0xff;
         int blue = (pixel) & 0xff;
+        
+        //a grayscale value closer to 0 is black, so evaluate to true
         data[x][y] = grayscale(red, green, blue) < 255 / 2;
       }
     return data;
   }
 
+  /**
+   * Convert a red, green, blue values to grayscale
+   * 
+   * @param r
+   * @param g
+   * @param b
+   * @return
+   */
   int grayscale(int r, int g, int b) {
     return (int) (0.212671 * r + 0.715160 * g + 0.072169 * b);
   }
 
+  /**
+   * Populate testing data - array lists of 2d boolean arrays Look in each
+   * h,v,b,f folders and parse images inside the test folder
+   */
   private void getTestingData() {
     FilenameFilter filter = new FilenameFilter() {
       public boolean accept(File dir, String name) {
@@ -427,7 +378,43 @@ public class guifrontend extends JFrame // For a browser Java-Applet instead of
         return extension.equalsIgnoreCase("png");
       }
     };
-    
+
+    File vertical_dir = new File("vertical/test");
+    File horizontal_dir = new File("horizontal/test");
+    File backslash_dir = new File("backslash/test");
+    File forwardslash_dir = new File("forwardslash/test");
+
+    String[] children = vertical_dir.list(filter);
+    for (int i = 0; i < children.length; i++)
+      vertical_tests.add(getGrayscaleData(new File("vertical/test/"
+          + children[i])));
+    children = horizontal_dir.list(filter);
+    for (int i = 0; i < children.length; i++)
+      horizontal_tests.add(getGrayscaleData(new File("horizontal/test/"
+          + children[i])));
+    children = backslash_dir.list(filter);
+    for (int i = 0; i < children.length; i++)
+      backslash_tests.add(getGrayscaleData(new File("backslash/test/"
+          + children[i])));
+    children = forwardslash_dir.list(filter);
+    for (int i = 0; i < children.length; i++)
+      forwardslash_tests.add(getGrayscaleData(new File("forwardslash/test/"
+          + children[i])));
+  }
+
+  /**
+   * Populate training data - array lists of 2d boolean arrays Look in each
+   * h,v,b,f folders and parse images
+   */
+  private void getTrainingData() {
+    FilenameFilter filter = new FilenameFilter() {
+      public boolean accept(File dir, String name) {
+        String[] names = name.split("\\.");
+        String extension = names[names.length - 1];
+        return extension.equalsIgnoreCase("png");
+      }
+    };
+
     File vertical_dir = new File("vertical");
     File horizontal_dir = new File("horizontal");
     File backslash_dir = new File("backslash");
@@ -435,16 +422,20 @@ public class guifrontend extends JFrame // For a browser Java-Applet instead of
 
     String[] children = vertical_dir.list(filter);
     for (int i = 0; i < children.length; i++)
-      vertical_inputs.add(getGrayscaleData(new File("vertical/"+children[i])));
+      vertical_inputs
+          .add(getGrayscaleData(new File("vertical/" + children[i])));
     children = horizontal_dir.list(filter);
     for (int i = 0; i < children.length; i++)
-      horizontal_inputs.add(getGrayscaleData(new File("horizontal/"+children[i])));
+      horizontal_inputs.add(getGrayscaleData(new File("horizontal/"
+          + children[i])));
     children = backslash_dir.list(filter);
     for (int i = 0; i < children.length; i++)
-      backslash_inputs.add(getGrayscaleData(new File("backslash/"+children[i])));
+      backslash_inputs
+          .add(getGrayscaleData(new File("backslash/" + children[i])));
     children = forwardslash_dir.list(filter);
     for (int i = 0; i < children.length; i++)
-      forwardslash_inputs.add(getGrayscaleData(new File("forwardslash/"+children[i])));
+      forwardslash_inputs.add(getGrayscaleData(new File("forwardslash/"
+          + children[i])));
   }
 
   /*
