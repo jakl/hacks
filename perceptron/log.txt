@@ -1,0 +1,8 @@
+I spent 2 hours on Thursday w5 programming the majority of the code.
+The basic skeleton of the gui code is from a framework I and a friend worked on in early high school.
+I spent another stretch of 3 hours tuning the GUI and commenting on Sunday before w7.
+
+I tested it extensively with the data given to us. I found that high learning rates and low initial varience tend to generate medium to high quality weights consistently.
+Low learning rates and high initial varience tends to create low quality perceptrons but with a small chance of outperforming the former method mentioned.
+
+It wouldn't be much extra code to have this working for human faces. Maybe it isn't worth the effort though if true neural networks would excessively outperform a perceptron solution.
