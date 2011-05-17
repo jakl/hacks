@@ -1,0 +1,1 @@
+public interface NNInput {  public double value(); }
