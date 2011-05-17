@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 public class hiddenNeuron extends neuron {
   
   //Output nodes will modify this to sum the error deltas
@@ -19,6 +17,7 @@ public class hiddenNeuron extends neuron {
     for(int i = 0; i < weight.length; i++){
       weight[i] += LEARN_RATE * error * latestInput[i];
     }
+    errorDelta = 0;
   }
 
   /**
