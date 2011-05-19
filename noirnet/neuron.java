@@ -5,7 +5,7 @@ public class neuron {
   double[] weight;// Weights of this perceptron
   
   //Amount that the weights may vary when initially set, above and below zero
-  public static double initialWeightVarity = .4;
+  public static double initialWeightVarity = .1;
   
   /**
    * Set the weights to initial random values if they aren't already
@@ -19,27 +19,13 @@ public class neuron {
           - initialWeightVarity;
   }
   
+  /**
+   * Activation function is only successful if non-linear for multi-tired networks
+   * @param sum Sum of the product of weights and inputs
+   * @return
+   */
   double activationFunction(double sum){
     latestActivation = 1 / (1 + Math.exp(-sum));
     return latestActivation;
   }
-  
-  /* Not necessary at this stage of the project
-   * Can incorporate these features once everything else is smoothly working
-    public static void increaseLearnRate() {
-      LEARN_RATE *= 2;
-    }
-
-    public static void decreaseLearnRate() {
-      LEARN_RATE /= 2;
-    }
-
-    public static void increaseInitialVarity() {
-      initialWeightVarity *= 2;
-    }
-
-    public static void decreaseInitialVarity() {
-      initialWeightVarity /= 2;
-    }
-    */
 }

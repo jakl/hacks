@@ -1,19 +1,12 @@
 public class outputNeuron extends neuron {
-  hiddenNeuron[] input;//Input neurons to this output neuron
-  
-  public outputNeuron(hiddenNeuron[] input){
+  hiddenNeuron[] input;// Input neurons to this output neuron
+
+  // Input / hidden neurons are references which update dynamically during
+  // testing and training
+
+  public outputNeuron(hiddenNeuron[] input) {
     this.input = input;
     setWeights(input.length);
-  }
-
-  /**
-   * Train this perceptron against a set of inputs It will adjust its weights if
-   * it fails to return the correct answer
-   * 
-   * @param inputs
-   * @param answer
-   */
-  public void train(double[][] inputs, boolean answer) {
   }
 
   /**
@@ -27,15 +20,25 @@ public class outputNeuron extends neuron {
     double sum = 0;
     for (int i = 0; i < input.length; i++)
       sum += weight[i] * input[i].latestActivation;
-    
+
     return activationFunction(sum);
   }
-  
-  public void train(double desiredActivation){
-    double change = LEARN_RATE * (desiredActivation - latestActivation) * latestActivation * (1-latestActivation);
-    for(int i = 0; i < weight.length; i++){
-      weight[i] += change * input[i].latestActivation;
-      input[i].errorDelta += change*weight[i];
+
+  /**
+   * Train self to activate closer to the desired activation value for the
+   * current set of inputs
+   * 
+   * @param desiredActivation
+   */
+  public void train(double desiredActivation) {
+    double delta = LEARN_RATE * (desiredActivation - latestActivation)
+        * latestActivation * (1 - latestActivation);
+    for (int i = 0; i < weight.length; i++) {
+      weight[i] += delta * input[i].latestActivation;// Adjust weights within
+      // output neuron
+      input[i].errorDelta += delta * weight[i];// Back propagate to hidden
+      // neurons, who will train
+      // themselves
     }
   }
 }

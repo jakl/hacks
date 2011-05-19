@@ -1,0 +1,12 @@
+Monday evening w8 I spent 3 hours coding the majority of the project. Due to the increased complexity of an entire network of perceptrons I didn't finish a nice gui, but the command line has fine performance.
+
+Between Wednesday night and Thursday morning I spend a couple more hours tweaking the code to try to get it to learn more effectively.
+
+The main problem I ran into was data normalization. I have zero normalization, so the program has trouble relating font numeral chars to actual handwriting. If I have it train on the testing set it has a good chance of exceeding 90% accuracy. With proper normalization this should hold mostly true even when not training on the test data set. As it is I've seen towards %50 success when it's really lucky.
+
+Regardless it is fascinating to play with the learning rate, quantity of hidden nodes, and inital randomness of weights while the program is running.
+
+During my testing early Wednesday night I noticed very strange behaviour. When I made improvements that should have great effect, they had none. Also, it kept confusing 3,8,9, and 0  It turned out to be a copy-paste error. I copied code from my perceptron's PNG management functions, which used 5x5 pngs, but this neural network uses 20x20 pngs, so it was only grabbing a slight portion of the upper left corner of each numeral's image.
+
+As always, everything is open source under the GNU GPL v3+
+The name noirnet is in tribute to Guy Noir, Private Eye

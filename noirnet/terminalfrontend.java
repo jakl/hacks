@@ -22,7 +22,7 @@ public class terminalfrontend {
           noirNetwork.setHiddenQuantity(in.nextInt());
         break;
       case 'e':
-        noirNetwork.test();
+        printTestResults(noirNetwork.test());
         break;
       case 'r':
         noirNetwork.reset();
@@ -34,8 +34,10 @@ public class terminalfrontend {
         break;
       case 'i':
         System.out.println("What should the initial randomness be?");
-        if (isDouble(in))
+        if (isDouble(in)) {
           noirNetwork.setRandomess(in.nextDouble());
+          System.out.println("You may want to call (r)eset now");
+        }
         break;
       case 'p':
         System.out.println("\n" + noirNetwork.status() + "\n");
@@ -50,17 +52,29 @@ public class terminalfrontend {
     }
   }
 
+  static void printTestResults(double[] results) {
+    double averageSuccess = 0;
+    for (int i = 0; i < results.length; i++){
+      System.out.println("For the number " + i + ", the network had "
+          + String.format("%1$.1f", results[i]*100) + "% success.");
+      averageSuccess = (averageSuccess * i + results[i]*100)/(i+1);
+    }
+    System.out.println("Average Success: " + String.format("%1$.1f%%", averageSuccess));
+  }
+
   static boolean isInt(Scanner in) {
     if (in.hasNextInt())
       return true;
+    in.next();
     System.out
         .println("Failed because you couldn't give a simple integer like 4");
     return false;
   }
-  
+
   static boolean isDouble(Scanner in) {
     if (in.hasNextDouble())
       return true;
+    in.next();
     System.out
         .println("Failed because you couldn't give a simple decimal like .42");
     return false;
