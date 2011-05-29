@@ -1,18 +1,13 @@
-var h, w, xmouse, ymouse;//Screen height and width, and mouse x and y positions
+var h, w, mousex, mousey;//Screen height and width, and mouse x and y positions
 var g = document.getElementById('canvas').getContext('2d');
 
-var overworld = {width:80,height:80,vieww:20,viewh:10,
-                  sprites:{grass:getImage('grass.png'),
-                           lava: getImage('lava.png'),
-                           water:getImage('water.png'),
-                           trainer:getImage('trainer.png'),
-                           cave:getImage('cave.png')},
-                  init:init_tiles, draw:draw_tiles};
-
-var playerx=2, playery=2;
-
 init();
-setTimeout("paint()",10);//wait for images to load
+tic();
+
+function tic(){
+  paint();
+  setTimeout("tic()", 60);
+}
 
 window.onresize=resize;
 
@@ -25,22 +20,25 @@ function resize(){
  
 function init(){
   resize();
-  overworld.init();
+  world.init();
 }
  
+//document.onmouseup = function(e){}
+//document.onmousedown = function(e){}
 document.onmousemove = function(e){
-  xmouse = e.pageX/w;
-  ymouse = e.pageY/h;
+  mousex = e.pageX/w;
+  mousey = e.pageY/h;
+  world.mouse(mousex,mousey);
 }
- 
-document.onmouseup = function(e){}
-document.onmousedown = function(e){}
- 
+document.onmousewheel = function (e){
+  world.zoom(-e.wheelDelta/120);
+}
+
 function paint(){
   g.fillStyle = '#000';
   g.fillRect(0,0,w,h);
   
-  overworld.draw(playerx,playery);
+  world.drawWorld();
  
   drawControls();
 }
@@ -48,12 +46,12 @@ function paint(){
 function drawControls(){
   g.fillStyle = '#ccc';
   controlYPos = 40;
-  drawControl("Space - Zoom Out");
-  drawControl("Secret - Zoom In");
-  drawControl("Arrow Keys - Move Pokemon Trainer");
+  drawControl("Mouse Wheel - Zoom");
+  drawControl("Mouse Position - Move Pokemon Trainer");
+  drawControl("Mouse Screen Edges - Scroll View of World");
 }
 
-var controlYPos=40;
+//var controlYPos=40;
 function drawControl(message){
   g.fillText(message,w/2,controlYPos+=20);
 }
@@ -61,12 +59,12 @@ function drawControl(message){
 var up=false,down=false,left=false,right=false,space=false,other=false;
  
 function key_down(e) {
-    if (e.keyCode == 39) {right=true;playerx++;paint();}
-    else if (e.keyCode == 37) {left=true;playerx--;paint();}
-    else if (e.keyCode == 38) {up=true;playery--;paint();}
-    else if (e.keyCode == 40) {down=true;playery++;paint();}
-    else if (e.keyCode == 32) {space=true;overworld.viewh+=2;overworld.vieww+=4;paint();}
-    else {other=true;overworld.viewh-=2;overworld.vieww-=4;paint();}
+    if (e.keyCode == 39) {right=true;}
+    else if (e.keyCode == 37) {left=true;}
+    else if (e.keyCode == 38) {up=true;}
+    else if (e.keyCode == 40) {down=true;}
+    else if (e.keyCode == 32) {space=true;}
+    else {other=true;}
 	return true;//false to capture input and decieve browser
 }
 function key_up(e) {
