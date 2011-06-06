@@ -1,0 +1,926 @@
+var evolves = {
+'Bulbasaur':{
+  evolve:Ivysaur,
+  level:16
+},
+'Ivysaur':{
+  evolve:Venusaur,
+  level:32
+},
+'Charmander':{
+  evolve:Charmeleon,
+  level:16
+},
+'Charmeleon':{
+  evolve:Charizard,
+  level:36
+},
+'Squirtle':{
+  evolve:Wartortle,
+  level:16
+},
+'Wartortle':{
+  evolve:Blastoise,
+  level:36
+},
+'Caterpie':{
+  evolve:Metapod,
+  level:7
+},
+'Metapod':{
+  evolve:Butterfree,
+  level:10
+},
+'Weedle':{
+  evolve:Kakuna,
+  level:7
+},
+'Kakuna':{
+  evolve:Beedrill,
+  level:10
+},
+'Pidgey':{
+  evolve:Pidgeotto,
+  level:18
+},
+'Pidgeotto':{
+  evolve:Pidgeot,
+  level:36
+},
+'Rattata':{
+  evolve:Raticate,
+  level:20
+},
+'Spearow':{
+  evolve:Fearow,
+  level:20
+},
+'Ekans':{
+  evolve:Arbok,
+  level:22
+},
+'Sandshrew':{
+  evolve:Sandslash,
+  level:22
+},
+'Nidorina':{
+  evolve:16,
+  level:16
+},
+'Zubat':{
+  evolve:Golbat,
+  level:22
+},
+'Oddish':{
+  evolve:Gloom,
+  level:21
+},
+'Paras':{
+  evolve:Parasect,
+  level:24
+},
+'Venonat':{
+  evolve:Venomoth,
+  level:31
+},
+'Diglett':{
+  evolve:Dugtrio,
+  level:26
+},
+'Meowth':{
+  evolve:Persian,
+  level:28
+},
+'Psyduck':{
+  evolve:Golduck,
+  level:33
+},
+'Mankey':{
+  evolve:Primeape,
+  level:28
+},
+'Poliwag':{
+  evolve:Poliwhirl,
+  level:25
+},
+'Abra':{
+  evolve:Kadabra,
+  level:16
+},
+'Machop':{
+  evolve:Machoke,
+  level:28
+},
+'Bellsprout':{
+  evolve:Weepinbell,
+  level:21
+},
+'Tentacool':{
+  evolve:Tentacruel,
+  level:30
+},
+'Geodude':{
+  evolve:Graveler,
+  level:25
+},
+'Ponyta':{
+  evolve:Rapidash,
+  level:40
+},
+'Slowpoke':{
+  evolve:Slowbro,
+  level:37
+},
+'Magnemite':{
+  evolve:Magneton,
+  level:30
+},
+'Doduo':{
+  evolve:Dodrio,
+  level:31
+},
+'Seel':{
+  evolve:Dewgong,
+  level:34
+},
+'Grimer':{
+  evolve:Muk,
+  level:38
+},
+'Gastly':{
+  evolve:Haunter,
+  level:25
+},
+'Drowzee':{
+  evolve:Hypno,
+  level:26
+},
+'Krabby':{
+  evolve:Kingler,
+  level:28
+},
+'Voltorb':{
+  evolve:Electrode,
+  level:30
+},
+'Cubone':{
+  evolve:Marowak,
+  level:28
+},
+'Tyrogue':{
+  evolve:Hitmonlee,
+  level:20
+},
+' Defense':{
+  evolve:Tyrogue,
+  level:20
+},
+'Attack ':{
+  evolve:Tyrogue,
+  level:20
+},
+'Koffing':{
+  evolve:Weezing,
+  level:35
+},
+'Rhyhorn':{
+  evolve:Rhydon,
+  level:42
+},
+'Horsea':{
+  evolve:Seadra,
+  level:32
+},
+'Goldeen':{
+  evolve:Seaking,
+  level:33
+},
+'Smoochum':{
+  evolve:Jynx,
+  level:30
+},
+'Elekid':{
+  evolve:Electabuzz,
+  level:30
+},
+'Magby':{
+  evolve:Magmar,
+  level:30
+},
+'Magikarp':{
+  evolve:Gyarados,
+  level:20
+},
+'Omanyte':{
+  evolve:Omastar,
+  level:40
+},
+'Kabuto':{
+  evolve:Kabutops,
+  level:40
+},
+'Dratini':{
+  evolve:Dragonair,
+  level:30
+},
+'Dragonair':{
+  evolve:Dragonite,
+  level:55
+},
+'Chikorita':{
+  evolve:Bayleef,
+  level:16
+},
+'Bayleef':{
+  evolve:Meganium,
+  level:32
+},
+'Cyndaquil':{
+  evolve:Quilava,
+  level:14
+},
+'Quilava':{
+  evolve:Typhlosion,
+  level:36
+},
+'Totodile':{
+  evolve:Croconaw,
+  level:18
+},
+'Croconaw':{
+  evolve:Feraligatr,
+  level:30
+},
+'Sentret':{
+  evolve:Furret,
+  level:15
+},
+'Hoothoot':{
+  evolve:Noctowl,
+  level:20
+},
+'Ledyba':{
+  evolve:Ledian,
+  level:18
+},
+'Spinarak':{
+  evolve:Ariados,
+  level:22
+},
+'Chinchou':{
+  evolve:Lanturn,
+  level:27
+},
+'Natu':{
+  evolve:Xatu,
+  level:25
+},
+'Mareep':{
+  evolve:Flaaffy,
+  level:15
+},
+'Flaaffy':{
+  evolve:Ampharos,
+  level:30
+},
+'Marill':{
+  evolve:Azumarill,
+  level:18
+},
+'Hoppip':{
+  evolve:Skiploom,
+  level:18
+},
+'Skiploom':{
+  evolve:Jumpluff,
+  level:27
+},
+'Wooper':{
+  evolve:Quagsire,
+  level:20
+},
+'Wynaut':{
+  evolve:Wobbuffet,
+  level:15
+},
+'Pineco':{
+  evolve:Forretress,
+  level:31
+},
+'Snubbull':{
+  evolve:Granbull,
+  level:23
+},
+'Teddiursa':{
+  evolve:Ursaring,
+  level:30
+},
+'Slugma':{
+  evolve:Magcargo,
+  level:38
+},
+'Swinub':{
+  evolve:Piloswine,
+  level:33
+},
+'Remoraid':{
+  evolve:Octillery,
+  level:25
+},
+'Houndour':{
+  evolve:Houndoom,
+  level:24
+},
+'Phanpy':{
+  evolve:Donphan,
+  level:25
+},
+'Larvitar':{
+  evolve:Pupitar,
+  level:30
+},
+'Pupitar':{
+  evolve:Tyranitar,
+  level:55
+},
+'Treecko':{
+  evolve:Grovyle,
+  level:16
+},
+'Grovyle':{
+  evolve:Sceptile,
+  level:36
+},
+'Torchic':{
+  evolve:Combusken,
+  level:16
+},
+'Combusken':{
+  evolve:Blaziken,
+  level:36
+},
+'Mudkip':{
+  evolve:Marshtomp,
+  level:16
+},
+'Marshtomp':{
+  evolve:Swampert,
+  level:36
+},
+'Poochyena':{
+  evolve:Mightyena,
+  level:18
+},
+'Zigzagoon':{
+  evolve:Linoone,
+  level:20
+},
+'Wurmple':{
+  evolve:Silcoon,
+  level:7
+},
+'Silcoon':{
+  evolve:Beautifly,
+  level:10
+},
+'Wurmple':{
+  evolve:Cascoon,
+  level:7
+},
+'Cascoon':{
+  evolve:Dustox,
+  level:10
+},
+'Lotad':{
+  evolve:Lombre,
+  level:14
+},
+'Seedot':{
+  evolve:Nuzleaf,
+  level:14
+},
+'Taillow':{
+  evolve:Swellow,
+  level:22
+},
+'Wingull':{
+  evolve:Pelipper,
+  level:25
+},
+'Ralts':{
+  evolve:Kirlia,
+  level:20
+},
+'Kirlia':{
+  evolve:Gardevoir,
+  level:30
+},
+'Surskit':{
+  evolve:Masquerain,
+  level:22
+},
+'Shroomish':{
+  evolve:Breloom,
+  level:23
+},
+'Slakoth':{
+  evolve:Vigoroth,
+  level:18
+},
+'Vigoroth':{
+  evolve:Slaking,
+  level:36
+},
+'Nincada':{
+  evolve:Ninjask,
+  level:20
+},
+'Nincada':{
+  evolve:Shedinja,
+  level:20
+},
+'with empty spot in party':{
+  evolve:Whismur,
+  level:20
+},
+'Loudred':{
+  evolve:Exploud,
+  level:40
+},
+'Makuhita':{
+  evolve:Hariyama,
+  level:24
+},
+'Aron':{
+  evolve:Lairon,
+  level:32
+},
+'Lairon':{
+  evolve:Aggron,
+  level:42
+},
+'Meditite':{
+  evolve:Medicham,
+  level:37
+},
+'Electrike':{
+  evolve:Manectric,
+  level:26
+},
+'Gulpin':{
+  evolve:Swalot,
+  level:26
+},
+'Carvanha':{
+  evolve:Sharpedo,
+  level:30
+},
+'Wailmer':{
+  evolve:Wailord,
+  level:40
+},
+'Numel':{
+  evolve:Camerupt,
+  level:33
+},
+'Spoink':{
+  evolve:Grumpig,
+  level:32
+},
+'Trapinch':{
+  evolve:Vibrava,
+  level:35
+},
+'Vibrava':{
+  evolve:Flygon,
+  level:45
+},
+'Cacnea':{
+  evolve:Cacturne,
+  level:32
+},
+'Swablu':{
+  evolve:Altaria,
+  level:35
+},
+'Barboach':{
+  evolve:Whiscash,
+  level:30
+},
+'Corphish':{
+  evolve:Crawdaunt,
+  level:30
+},
+'Baltoy':{
+  evolve:Claydol,
+  level:36
+},
+'Lileep':{
+  evolve:Cradily,
+  level:40
+},
+'Anorith':{
+  evolve:Armaldo,
+  level:40
+},
+'Shuppet':{
+  evolve:Banette,
+  level:37
+},
+'Duskull':{
+  evolve:Dusclops,
+  level:37
+},
+'Snorunt':{
+  evolve:Glalie,
+  level:42
+},
+'Spheal':{
+  evolve:Sealeo,
+  level:32
+},
+'Sealeo':{
+  evolve:Walrein,
+  level:44
+},
+'Bagon':{
+  evolve:Shelgon,
+  level:30
+},
+'Shelgon':{
+  evolve:Salamence,
+  level:50
+},
+'Beldum':{
+  evolve:Metang,
+  level:20
+},
+'Metang':{
+  evolve:Metagross,
+  level:45
+},
+'Turtwig':{
+  evolve:Grotle,
+  level:18
+},
+'Grotle':{
+  evolve:Torterra,
+  level:32
+},
+'Chimchar':{
+  evolve:Monferno,
+  level:14
+},
+'Monferno':{
+  evolve:Infernape,
+  level:36
+},
+'Piplup':{
+  evolve:Prinplup,
+  level:16
+},
+'Prinplup':{
+  evolve:Empoleon,
+  level:36
+},
+'Starly':{
+  evolve:Staravia,
+  level:14
+},
+'Staravia':{
+  evolve:Staraptor,
+  level:34
+},
+'Bidoof':{
+  evolve:Bibarel,
+  level:15
+},
+'Kricketot':{
+  evolve:Kricketune,
+  level:10
+},
+'Shinx':{
+  evolve:Luxio,
+  level:15
+},
+'Luxio':{
+  evolve:Luxray,
+  level:30
+},
+'Cranidos':{
+  evolve:Rampardos,
+  level:30
+},
+'Shieldon':{
+  evolve:Bastiodon,
+  level:30
+},
+'Burmy':{
+  evolve:Mothim,
+  level:20
+},
+'Male':{
+  evolve:Burmy,
+  level:20
+},
+'Burmy':{
+  evolve:Wormadam,
+  level:20
+},
+'Burmy':{
+  evolve:Wormadam,
+  level:20
+},
+'Combee':{
+  evolve:Vespiquen,
+  level:21
+},
+'Female':{
+  evolve:Buizel,
+  level:26
+},
+'Cherubi':{
+  evolve:Cherrim,
+  level:25
+},
+'Shellos':{
+  evolve:Gastrodon,
+  level:30
+},
+'Drifloon':{
+  evolve:Drifblim,
+  level:28
+},
+'Glameow':{
+  evolve:Purugly,
+  level:38
+},
+'Stunky':{
+  evolve:Skuntank,
+  level:34
+},
+'Bronzor':{
+  evolve:Bronzong,
+  level:33
+},
+'Gible':{
+  evolve:Gabite,
+  level:24
+},
+'Gabite':{
+  evolve:Garchomp,
+  level:48
+},
+'Hippopotas':{
+  evolve:Hippowdon,
+  level:34
+},
+'Skorupi':{
+  evolve:Drapion,
+  level:40
+},
+'Croagunk':{
+  evolve:Toxicroak,
+  level:37
+},
+'Finneon':{
+  evolve:Lumineon,
+  level:31
+},
+'Snover':{
+  evolve:Abomasnow,
+  level:40
+},
+'Snivy':{
+  evolve:Servine,
+  level:17
+},
+'Servine':{
+  evolve:Serperior,
+  level:36
+},
+'Tepig':{
+  evolve:Pignite,
+  level:17
+},
+'Pignite':{
+  evolve:Emboar,
+  level:36
+},
+'Oshawott':{
+  evolve:Dewott,
+  level:17
+},
+'Dewott':{
+  evolve:Samurott,
+  level:36
+},
+'Patrat':{
+  evolve:Watchog,
+  level:20
+},
+'Lillipup':{
+  evolve:Herdier,
+  level:16
+},
+'Herdier':{
+  evolve:Stoutland,
+  level:32
+},
+'Purrloin':{
+  evolve:Liepard,
+  level:20
+},
+'Pidove':{
+  evolve:Tranquill,
+  level:21
+},
+'Tranquill':{
+  evolve:Unfezant,
+  level:32
+},
+'Blitzle':{
+  evolve:Zebstrika,
+  level:27
+},
+'Roggenrola':{
+  evolve:Boldore,
+  level:25
+},
+'Drilbur':{
+  evolve:Excadrill,
+  level:31
+},
+'Timburr':{
+  evolve:Gurdurr,
+  level:25
+},
+'Tympole':{
+  evolve:Palpitoad,
+  level:25
+},
+'Palpitoad':{
+  evolve:Seismitoad,
+  level:36
+},
+'Sewaddle':{
+  evolve:Swadloon,
+  level:20
+},
+'Venipede':{
+  evolve:Whirlipede,
+  level:22
+},
+'Whirlipede':{
+  evolve:Scolipede,
+  level:30
+},
+'Sandile':{
+  evolve:Krokorok,
+  level:29
+},
+'Krokorok':{
+  evolve:Krookodile,
+  level:40
+},
+'Darumaka':{
+  evolve:Darmanitan,
+  level:35
+},
+'Dwebble':{
+  evolve:Crustle,
+  level:34
+},
+'Scraggy':{
+  evolve:Scrafty,
+  level:39
+},
+'Yamask':{
+  evolve:Cofagrigus,
+  level:34
+},
+'Tirtouga':{
+  evolve:Carracosta,
+  level:37
+},
+'Archen':{
+  evolve:Archeops,
+  level:37
+},
+'Trubbish':{
+  evolve:Garbodor,
+  level:36
+},
+'Zorua':{
+  evolve:Zoroark,
+  level:30
+},
+'Gothita':{
+  evolve:Gothorita,
+  level:32
+},
+'Gothorita':{
+  evolve:Gothitelle,
+  level:41
+},
+'Solosis':{
+  evolve:Duosion,
+  level:32
+},
+'Duosion':{
+  evolve:Reuniclus,
+  level:41
+},
+'Ducklett':{
+  evolve:Swanna,
+  level:35
+},
+'Vanillite':{
+  evolve:Vanillish,
+  level:35
+},
+'Vanillish':{
+  evolve:Vanilluxe,
+  level:47
+},
+'Deerling':{
+  evolve:Sawsbuck,
+  level:34
+},
+'Foongus':{
+  evolve:Amoonguss,
+  level:39
+},
+'Frillish':{
+  evolve:Jellicent,
+  level:40
+},
+'Joltik':{
+  evolve:Galvantula,
+  level:36
+},
+'Ferroseed':{
+  evolve:Ferrothorn,
+  level:40
+},
+'Klink':{
+  evolve:Klang,
+  level:38
+},
+'Klang':{
+  evolve:Klinklang,
+  level:49
+},
+'Tynamo':{
+  evolve:Eelektrik,
+  level:39
+},
+'Elgyem':{
+  evolve:Beheeyem,
+  level:42
+},
+'Litwick':{
+  evolve:Lampent,
+  level:41
+},
+'Axew':{
+  evolve:Fraxure,
+  level:38
+},
+'Fraxure':{
+  evolve:Haxorus,
+  level:48
+},
+'Cubchoo':{
+  evolve:Beartic,
+  level:37
+},
+'Mienfoo':{
+  evolve:Mienshao,
+  level:50
+},
+'Golett':{
+  evolve:Golurk,
+  level:43
+},
+'Pawniard':{
+  evolve:Bisharp,
+  level:52
+},
+'Rufflet':{
+  evolve:Braviary,
+  level:54
+},
+'Vullaby':{
+  evolve:Mandibuzz,
+  level:54
+},
+'Deino':{
+  evolve:Zweilous,
+  level:50
+},
+'Zweilous':{
+  evolve:Hydreigon,
+  level:64
+}
+}
