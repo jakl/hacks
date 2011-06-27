@@ -49,7 +49,6 @@ Description:"Randomly raises one of the user's stats by two stages."
 Type:'Flying'
 Category:'Physical'
 Power:60
-Accuracy:'∞'
 PP:20
 TM:'TM40'
 Description:'Cannot miss, regardless of Accuracy or Evasiveness.'
@@ -190,7 +189,6 @@ Description:"If opponent is the opposite gender, it's less likely to attack."
 Type:'Fighting'
 Category:'Special'
 Power:90
-Accuracy:'∞'
 PP:20
 Description:'Cannot miss, regardless of Accuracy or Evasiveness.'
 },
@@ -1113,7 +1111,6 @@ Description:'Stronger if user is Burned, Poisoned, or Paralyzed.'
 Type:'Dark'
 Category:'Physical'
 Power:60
-Accuracy:'∞'
 PP:20
 Description:'Cannot miss, regardless of Accuracy or Evasiveness.'
 },
@@ -2157,7 +2154,6 @@ Description:'Suppresses the effects of held items for five turns.'
 Type:'Grass'
 Category:'Special'
 Power:60
-Accuracy:'∞'
 PP:20
 Description:'Cannot miss, regardless of Accuracy or Evasiveness.'
 },
@@ -2173,7 +2169,6 @@ Description:'Opponent cannot escape/switch.'
 Type:'Steel'
 Category:'Physical'
 Power:60
-Accuracy:'∞'
 PP:20
 Description:'Cannot miss, regardless of Accuracy or Evasiveness.'
 },
@@ -3213,7 +3208,6 @@ Description:'Disappears on the 1st turn, attacks on the 2nd turn.'
 Type:'Ghost'
 Category:'Physical'
 Power:60
-Accuracy:'∞'
 PP:20
 Description:'Cannot miss, regardless of Accuracy and Evasiveness.'
 },
@@ -3254,7 +3248,6 @@ Description:'Raises Attack and sharply raises Speed.'
 Type:'Electric'
 Category:'Special'
 Power:60
-Accuracy:'∞'
 PP:20
 TM:'TM34'
 Description:'Cannot miss, regardless of Accuracy and Evasiveness.'
@@ -3749,7 +3742,6 @@ Description:"Decreases opponent's Evasiveness by one stage."
 Type:'Normal'
 Category:'Special'
 Power:60
-Accuracy:'∞'
 PP:20
 Description:'Cannot miss, regardless of Accuracy and Evasiveness.'
 },
@@ -4083,7 +4075,6 @@ PP:15
 Type:'Fighting'
 Category:'Physical'
 Power:70
-Accuracy:'∞'
 PP:10
 Description:'User attacks last, but cannot miss.'
 },
