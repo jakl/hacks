@@ -439,8 +439,8 @@ var evolves = {
   evolve:Shedinja,
   level:20
 },
-'with empty spot in party':{
-  evolve:Whismur,
+'Whismur':{
+  evolve:Loudred
   level:20
 },
 'Loudred':{
