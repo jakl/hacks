@@ -1,4 +1,4 @@
-var gnutype = {
+var types = {
 Bug:{
   Good:['Grass','Psychic', 'Dark'],
   Bad: ['Fire', 'Fighting', 'Poison', 'Flying', 'Ghost', 'Steel']},
