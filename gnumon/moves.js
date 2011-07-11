@@ -6,6 +6,11 @@ pp:25,
 power:20,
 accuracy:100,
 description:'User recovers half of the HP inflicted on opponent.',
+act:function(user, target){
+	user = {level:20, special_attack:20};
+	target = {special_defense:20, type:['Ground']};
+	return ((2 * user.level / 5 + 2) * user.special_attack * this.power / target.special_defense / 50 + 2) * types.multiplier(this.type, target.type[0]) * (Math.random()*15+85) / 100;
+}
 },
 'Acid':{
 type:'Poison',

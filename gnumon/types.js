@@ -1,4 +1,39 @@
 var types = {
+multiplier:function(user, target, a, b){
+  if(a == undefined && b == undefined){
+    if(this[user].Good.contains(target))
+      return 1.5;
+    else if(this[user].Bad.contains(target))
+      return .5;
+    else
+      return 1;
+  }
+  else if (a != undefined && b != undefined){
+    var user1 = user;
+    var user2 = target;
+    var target1 = a;
+    var target2 = b;
+    var multi=1;
+    if(this[user1].Good.contains(target1))
+        multi *= 2;
+    if(this[user1].Good.contains(target2))
+        multi *= 2;
+    if(this[user1].Bad.contains(target1))
+        multi /= 2;
+    if(this[user1].Bad.contains(target2))
+        multi /= 2;
+    if(this[user2].Good.contains(target1))
+        multi *= 2;
+    if(this[user2].Good.contains(target2))
+        multi *= 2;
+    if(this[user2].Bad.contains(target1))
+        multi /= 2;
+    if(this[user2].Bad.contains(target2))
+        multi /= 2;
+  } else {
+    return 1;
+  }
+},
 Bug:{
   Good:['Grass','Psychic', 'Dark'],
   Bad: ['Fire', 'Fighting', 'Poison', 'Flying', 'Ghost', 'Steel']},
