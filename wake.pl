@@ -5,8 +5,8 @@
 #This program takes a single argument in the hour colon minute format
 #       hh:mm
 #It will sleep until that time next occurs, waiting past midnight if need be
-#Then tries to run the ruby script crankvolume found at github.com/jediknight304/hacks
-#This script interfaces with pulseaudio, and can be copied to /usr/local/bin/crankvolume
+#At the end of waiting, it cranks up the volume to full
+#This script interfaces with pulseaudio, and can be copied to /usr/local/bin/
 
 use warnings;
 use strict;
