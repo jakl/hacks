@@ -1,0 +1,20 @@
+alias search='aptitude search'
+alias show='aptitude show'
+alias instal='sudo aptitude install'
+alias remove='sudo aptitude remove'
+alias update='sudo aptitude update'
+alias upgrade='sudo aptitude safe-upgrade'
+
+alias ls='ls -F --color=auto'
+alias la="ls -a | grep '^\.'"
+alias ff='find . -type f -iname'
+alias acp='ack -i --perl'
+alias when='~/bin/when.sh' #history | grep -i $1 | grep -v when
+alias what='ps -e | grep -i'
+alias v='vi'
+alias s='screen -DR'
+alias s='screen -DR'
+
+if [ -f ~/.genome_alias ]; then
+    . ~/.genome_alias
+fi
