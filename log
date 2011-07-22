@@ -1,0 +1,25 @@
+#!/usr/bin/env perl
+#usage: 
+#log ls
+#Logs the output of ls to a generated log file named similar to ~/logs/ls-Fri_07_22_15:58.log
+#Output still goes to terminal
+
+use File::Path 'make_path';
+
+die unless $ENV{HOME};
+my $log_dir = $ENV{HOME} . '/logs';
+make_path $log_dir unless (-d $log_dir);
+
+my $cmd = shift @ARGV || die;;
+(my $cmd_name = $cmd) =~ s/\//_/g;
+my $log_file = $log_dir . '/' . $cmd_name . '-' . `echo -n \`date +%a_%m_%d_%R\`` . '.log';
+$cmd .= " '" . join ("' '", @ARGV) . "'" if (@ARGV);
+
+print("\nLog: $log_file\n\n");
+
+open $FH, ">>$log_file";
+print $FH "\nLOGGED-COMMAND: $cmd\n";
+close $FH;
+
+system("$cmd | tee -a $log_file");
+print("\nLog: $log_file\n\n");
