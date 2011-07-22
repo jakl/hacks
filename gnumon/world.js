@@ -78,9 +78,11 @@ var world = {
   init:function(){
     for(var x=0;x<this.ww;x++)
       this.tiles[x] = [];
-      
+
     for(var x=0;x<this.ww;x++)
       for(var y=0;y<this.wh;y++){
+        this.tiles.x.y = zones.a.tiles.y.substr(x-1,1)
+/*      
         var rand = Math.random();
         if(rand > .8)
           this.tiles[x][y] = this.sprites.grass;
@@ -91,5 +93,6 @@ var world = {
         else
           this.tiles[x][y] = this.sprites.cave;
       }
+*/
   }
 }

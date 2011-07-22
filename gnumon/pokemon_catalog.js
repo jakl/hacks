@@ -1,4 +1,4 @@
-var gnudex = {
+var pokemon_catalog = {
 'Bulbasaur':{
 type:['Grass','Poison'],
 evolution:'Ivysaur',
