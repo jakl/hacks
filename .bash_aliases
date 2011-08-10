@@ -1,19 +1,27 @@
-alias search='apt-cache search'
-alias show='apt-cache show'
-alias instal='sudo apt-get install'
-alias remove='sudo apt-get autoremove'
-alias update='sudo apt-get update'
-alias upgrade='sudo apt-get upgrade'
+alias search='aptitude search'
+alias show='aptitude show'
+alias instal='sudo aptitude install'
+alias remove='sudo aptitude remove'
+alias update='sudo aptitude update'
+alias upgrade='sudo aptitude safe-upgrade'
 
 alias ls='ls -F --color=auto'
 alias la="ls -a | grep '^\.'"
 alias ff='find . -type f -iname'
-alias acp='ack -i --perl' #instal ack-grep
-alias when='~/bin/when.sh' #history | grep -i $1 | grep -v when
+#alias ack='ack-grep' #ubuntu package default is ack-grep
+alias acp='ack -i --perl'
 alias what='ps -e | grep -i'
-alias v='vi'
 alias s='screen -DR'
-alias s='screen -DR'
+
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+
+when() { 
+    history | grep -i $1 | grep -v when 
+}
 
 if [ -f ~/.genome_alias ]; then
     . ~/.genome_alias
