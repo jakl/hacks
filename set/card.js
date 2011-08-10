@@ -3,12 +3,20 @@
 //shading solid, striped, open
 //color red, green, purple
 function card(number,symbol,shading,color){
+  this.__defineGetter__('number',function(){console.log('get number');return this.m_number});
+  this.__defineSetter__('number',function(val){console.log('set number');this.m_number = val});
+  this.__defineGetter__('symbol',function(){console.log('get symbol');return this.m_symbol});
+  this.__defineSetter__('symbol',function(val){console.log('set symbol');this.m_symbol = val});
+  this.__defineGetter__('shading',function(){console.log('get shading');return this.m_shading});
+  this.__defineSetter__('shading',function(val){console.log('set shading');this.m_shading = val});
+  this.__defineGetter__('color',function(){console.log('get color');return this.m_color});
+  this.__defineSetter__('color',function(val){console.log('set color');this.m_color = val});
   this.number=number;
   this.symbol=symbol;
   this.shading=shading;
   this.color=color;
 }
-set_member_properties(card,{
+add_members(card,{
   get_third_card:function(x){
     return new card(
       this.get_third_number(x.number),
@@ -32,7 +40,7 @@ set_member_properties(card,{
     return card.get_third_color(this.color,x);
   },
 });
-set_static_properties(card,{
+add_statics(card,{
   number:{one:1,two:2,three:3},
   symbol:{diamond:1,squiggle:2,oval:3},
   shading:{solid:1,striped:2,open:3},

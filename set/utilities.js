@@ -1,8 +1,8 @@
-function set_static_properties(object, properties){
-    for (property_name in properties)
-          object[property_name] = properties[property_name];
+function add_statics(object, properties){
+  for (var property_name in properties)
+    object[property_name] = properties[property_name];
 }
-function set_member_properties(object, properties){
-    for (property_name in properties)
-          object.prototype[property_name] = properties[property_name];
+function add_members(object, properties){
+  for (var property_name in properties)
+    object.prototype[property_name] = properties[property_name];
 }

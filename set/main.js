@@ -1,5 +1,6 @@
 var main = {
   up:false,down:false,left:false,right:false,space:false,other:false,
+  dat_message:'dawg',
 
   tic:function(){
     this.paint();
@@ -49,7 +50,11 @@ var main = {
     this.g.fillStyle = '#ccc';
     this.draw_control_y = 40;
     this.draw_control("The Game of Set");
-    this.draw_control(card.get_third_symbol('oval','squiggle'));
+    var c = new card(3,'oval','open','green');
+    this.draw_control(c.get_third_symbol('oval'));
+    this.draw_control(this.dat_message);
+    c.symbol = 'diamond';
+    this.draw_control(c.get_third_symbol('oval'));
   },
   draw_control:function(message){
     this.g.fillText(message,this.g.canvas.width/2,this.draw_control_y+=20);
