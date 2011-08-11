@@ -1,6 +1,7 @@
 var main = {
   up:false,down:false,left:false,right:false,space:false,other:false,
-  dat_message:'dawg',
+  number:'one',symbol:'diamond',shading:'solid',color:'red',
+  title:'The Game of Set',
 
   tic:function(){
     this.paint();
@@ -13,6 +14,7 @@ var main = {
   },
   init:function(){
     this.g = document.getElementById('canvas').getContext('2d');
+    this.g.lineWidth = 10;
 
     //document.onmouseup = function(e){}
     //document.onmousedown = function(e){}
@@ -27,34 +29,20 @@ var main = {
     g.fillStyle = '#000';
     g.fillRect(0,0,this.g.canvas.width,this.g.canvas.height);
 
-    g.fillStyle = '#315';
-    this.draw_diamond(g,0,0,.3,.3);
+    var c;
+    c = new card({number:this.number,symbol:this.symbol,shading:this.shading,color:this.color});
+    c.draw(g,0,0);
+    c = new card({number:1,symbol:1,shading:1,color:1});
+    c.draw(g,.3,.3);
+    c = new card({number:2,symbol:2,shading:2,color:2});
+    c.draw(g,.6,.6);
 
     this.draw_controls();
-  },
-  draw_diamond:function(g,x,y,w,h){
-    g.beginPath();
-    x=g.canvas.width*x;
-    y=g.canvas.height*y;
-    w=g.canvas.width*w;
-    h=g.canvas.height*h;
-    g.moveTo(0,h/2);
-    g.lineTo(w/2,0);
-    g.lineTo(w,h/2);
-    g.lineTo(w/2,h);
-    g.lineTo(0,h/2);
-    g.closePath();
-    g.fill();
   },
   draw_controls:function(){
     this.g.fillStyle = '#ccc';
     this.draw_control_y = 40;
-    this.draw_control("The Game of Set");
-    var c = new card('one','oval','open','green');
-    console.log(c);
-    console.log(c.symbol);
-    console.log(c.symbol.get_third(new symbol('oval')));
-    this.draw_control(c.symbol.get_third(new symbol('oval')).string);
+    this.draw_control(this.title);
   },
   draw_control:function(message){
     this.g.fillText(message,this.g.canvas.width/2,this.draw_control_y+=20);

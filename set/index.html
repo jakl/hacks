@@ -3,6 +3,7 @@
 Out with the stone age ... Use Chrome!  sry w3m </canvas> 
 <script type='text/javascript' src='DAT.GUI.min.js'></script>
 <script type="text/javascript" src="utilities.js"></script>
+<script type="text/javascript" src="features.js"></script>
 <script type="text/javascript" src="main.js"></script>
 <script type="text/javascript" src="card.js"></script>
 <body class='bg' onKeyDown="return main.key_down(event)" onKeyUp="return main.key_up(event)"> 
@@ -10,6 +11,10 @@ Out with the stone age ... Use Chrome!  sry w3m </canvas>
   window.onload=function(){
     main.init();
     var gui = new DAT.GUI();
-    gui.add(main, 'dat_message');
+    gui.add(main, 'title');
+    gui.add(main, 'number');
+    gui.add(main, 'symbol');
+    gui.add(main, 'shading');
+    gui.add(main, 'color');
   }
 </script>

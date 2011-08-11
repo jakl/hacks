@@ -2,11 +2,11 @@
 //symbol   diamond, squiggle, oval
 //shading  solid, striped, open
 //color    red, green, purple
-function card(number_value,symbol_value,shading_value,color_value){
-  this.number=new number(number_value);
-  this.symbol=new symbol(symbol_value);
-  this.shading=new shading(shading_value);
-  this.color=new color(color_value);
+function card(features){
+  this.number=new number(features.number);
+  this.symbol=new symbol(features.symbol);
+  this.shading=new shading(features.shading);
+  this.color=new color(features.color);
 };
 add_members(card,{
   rotate_features:function(){
@@ -24,10 +24,81 @@ add_members(card,{
       card.get_third(this.color.value,x.color.value));
   },
   equals:function(card){
-    return card.number.value==this.number.value && card.symbol.value==this.symbol.value && card.shading.value==this.shading.value && card.color.value==this.color.value;
+    return card.number.equals(this.number) && card.symbol.equals(this.symbol) && card.shading.equals(this.shading) && card.color.equals(this.color);
+  },
+  draw:function(g,x,y){
+    switch(this.color.string){
+      case 'red':g.fillStyle = g.strokeStyle = '#f00'; break;
+      case 'green':g.fillStyle = g.strokeStyle = '#0f0'; break;
+      case 'purple':g.fillStyle = g.strokeStyle = '#308'; break;
+    }
+    switch(this.number.string){
+      case 'one':this.draw_symbol(g,x,y,card.width,card.height); break;
+      case 'two':
+        this.draw_symbol(g,x,y,card.width,card.height/2);
+        this.draw_symbol(g,x,y+card.height/2,card.width,card.height/2);
+        break;
+      case 'three':
+        this.draw_symbol(g,x,y,card.width,card.height/3);
+        this.draw_symbol(g,x,y+card.height/3,card.width,card.height/3);
+        this.draw_symbol(g,x,y+card.height*2/3,card.width,card.height/3);
+        break;
+    }
+  },
+  draw_symbol:function(g,x,y,w,h){
+    switch(this.symbol.string){
+      case 'diamond':this.draw_diamond(g,x,y,w,h); break;
+      case 'squiggle':this.draw_squiggle(g,x,y,w,h); break;
+      case 'oval':this.draw_oval(g,x,y,w,h); break;
+    }
+  },
+  draw_diamond:function(g,x,y,w,h){
+    x=g.canvas.width*x;
+    y=g.canvas.height*y;
+    w=g.canvas.width*w;
+    h=g.canvas.height*h;
+    g.beginPath();
+    g.moveTo(x,h/2+y);
+    g.lineTo(w/2+x,y);
+    g.lineTo(w+x,h/2+y);
+    g.lineTo(w/2+x,h+y);
+    g.lineTo(x,h/2+y);
+    g.closePath();
+    this.shade(g);
+  },
+  draw_oval:function(g,x,y,w,h){
+    w=g.canvas.width*w;
+    h=g.canvas.height*h;
+    var center_x=g.canvas.width*x+w/2;
+    var center_y=g.canvas.height*y+h/2;
+    g.beginPath();
+    g.arc(center_x, center_y, h/2, 0, 2 * Math.PI, false);
+    this.shade(g);
+  },
+  draw_squiggle:function(g,x,y,w,h){
+    x=g.canvas.width*x;
+    y=g.canvas.height*y;
+    w=g.canvas.width*w;
+    h=g.canvas.height*h;
+    g.beginPath();
+    g.moveTo(x,y);
+    g.lineTo(w+x,h+y);
+    g.lineTo(w+x,y);
+    g.lineTo(x,h+y);
+    g.lineTo(x,y);
+    g.closePath();
+    this.shade(g);
+  },
+  shade:function(g){
+    switch(this.shading.string){
+      case 'solid':g.fill(); break;
+      case 'striped':g.stroke(); break;
+      case 'open':g.stroke(); break;
+    }
   },
 });
 add_statics(card,{
+  width:1/4,height:1/3,
   increment_offsets:function(){number.offset++;symbol.offset++;shading.offset++;color.offset++;},
   get_third:function(a,b){
     if(a==b)
@@ -40,90 +111,3 @@ add_statics(card,{
       return 2;
   },
 });
-
-
-
-
-function number(value){
-  this.__defineSetter__('value',function(val){
-    if(val == 'one') this.m_value = 0;
-    else if(val == 'two') this.m_value = 1;
-    else if(val == 'three') this.m_value = 2;
-    else if(val >= 0 && val <=2) this.m_value = val;
-    else throw "invalid value ("+val+") must be any of: one two three OR 0 1 2";
-  });
-  this.__defineGetter__('value',function(){return (this.m_value+number.offset)%3});
-  this.__defineGetter__('string',function(){
-    switch(this.value){
-      case 0:return 'one';
-      case 1:return 'two';
-      case 2:return 'three';
-      default:throw 'bad number ' + this.val;
-  }});
-  this.value = value;
-};
-add_statics(number,{offset:0});
-add_members(number,{get_third:function(x){return new number(card.get_third(this.value,x.value));}});
-
-function color(value){
-  this.__defineSetter__('value',function(val){
-    if(val == 'red') this.m_value = 0;
-    else if(val == 'green') this.m_value = 1;
-    else if(val == 'purple') this.m_value = 2;
-    else if(val >= 0 && val <=2) this.m_value = val;
-    else throw "invalid value ("+val+") must be any of: red green purple OR 0 1 2";
-  });
-  this.__defineGetter__('value',function(){return (this.m_value+color.offset)%3});
-  this.__defineGetter__('string',function(){
-    switch(this.value){
-      case 0:return 'red';
-      case 1:return 'green';
-      case 2:return 'purple';
-      default:throw 'bad color ' + this.val;
-  }});
-  this.value = value;
-};
-add_statics(color,{offset:0});
-add_members(color,{get_third:function(x){return new color(card.get_third(this.value,x.value));}});
-
-function shading(value){
-  this.__defineSetter__('value',function(val){
-    if(val == 'solid') this.m_value = 0;
-    else if(val == 'striped') this.m_value = 1;
-    else if(val == 'open') this.m_value = 2;
-    else if(val >= 0 && val <=2) this.m_value = val;
-    else throw "invalid value ("+val+") must be any of: solid striped open OR 0 1 2";
-  });
-  this.__defineGetter__('value',function(){return (this.m_value+shading.offset)%3});
-  this.__defineGetter__('string',function(){
-    switch(this.value){
-      case 0:return 'solid';
-      case 1:return 'striped';
-      case 2:return 'open';
-      default:throw 'bad shading ' + this.val;
-  }});
-  this.value = value;
-};
-add_statics(shading,{offset:0});
-add_members(shading,{get_third:function(x){return new shading(card.get_third(this.value,x.value));}});
-
-function symbol(value){
-  this.__defineSetter__('value',function(val){
-    if(val == 'diamond') this.m_value = 0;
-    else if(val == 'squiggle') this.m_value = 1;
-    else if(val == 'oval') this.m_value = 2;
-    else if(val >= 0 && val <=2) this.m_value = val;
-    else throw "invalid value ("+val+") must be any of: diamond squiggle oval OR 0 1 2";
-  });
-  this.__defineGetter__('value',function(){return (this.m_value+symbol.offset)%3});
-  this.__defineGetter__('string',function(){
-    switch(this.value){
-      case 0:return 'diamond';
-      case 1:return 'squiggle';
-      case 2:return 'oval';
-      default:throw 'bad symbol ' + this.val;
-  }});
-  this.value = value;
-};
-add_statics(symbol,{offset:0});
-add_members(symbol,{get_third:function(x){return new symbol(card.get_third(this.value,x.value));}});
