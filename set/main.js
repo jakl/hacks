@@ -50,11 +50,11 @@ var main = {
     this.g.fillStyle = '#ccc';
     this.draw_control_y = 40;
     this.draw_control("The Game of Set");
-    var c = new card(3,'oval','open','green');
-    this.draw_control(c.get_third_symbol('oval'));
-    this.draw_control(this.dat_message);
-    c.symbol = 'diamond';
-    this.draw_control(c.get_third_symbol('oval'));
+    var c = new card('one','oval','open','green');
+    console.log(c);
+    console.log(c.symbol);
+    console.log(c.symbol.get_third(new symbol('oval')));
+    this.draw_control(c.symbol.get_third(new symbol('oval')).string);
   },
   draw_control:function(message){
     this.g.fillText(message,this.g.canvas.width/2,this.draw_control_y+=20);
