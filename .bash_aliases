@@ -11,6 +11,7 @@ alias ff='find . -type f -iname'
 alias acp='ack -i --perl'
 alias what='ps -e | grep -i'
 alias s='screen -DR'
+alias gs='git status'
 
 alias ..='cd ..'
 alias ...='cd ../..'
