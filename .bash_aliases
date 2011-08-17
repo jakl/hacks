@@ -12,6 +12,7 @@ alias acp='ack -i --perl'
 alias what='ps -e | grep -i'
 alias s='screen -DR'
 alias gs='git status'
+alias gp='git pull --rebase'
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -39,6 +40,9 @@ parse_git_branch() {
 get_dir() {
   pwd | sed -e 's/.*\///'
 }
+get_box() {
+    uname -n | sed -e 's/\..*//'
+}
 
 #make the input line in the terminal only show the deepest dir and git info
-export PS1="\$(get_dir)\$(parse_git_branch)$ "
+export PS1="\$(get_box):\$(get_dir)\$(parse_git_branch)$ "
