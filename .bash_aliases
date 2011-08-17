@@ -10,6 +10,7 @@ alias la="ls -a | grep '^\.' | column"
 alias ff='find . -type f -iname'
 alias acp='ack -i --perl'
 alias what='ps -e | grep -i'
+alias bc='bc -l'
 alias s='screen -DR'
 alias gs='git status'
 alias gp='git pull --rebase'
