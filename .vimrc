@@ -17,7 +17,10 @@ set mouse=a "mouse compatability
 set autoread "reload changed files when unedited
 set linebreak "wrap lines at natural word dividers
 set title "set terminal title to file name
+set nowrapscan
+set nowrap
 colorscheme elflord "no dark blue, and pretty syntax colors
+map <C-T> :tabnew
 
 "complete current word with tab, looking upwards for matches
 inoremap <TAB> <C-P> 
@@ -31,3 +34,10 @@ vmap r "_dP
 "not sure why I have these two or what they do exactly; comments maybe wrong
 "set cindent "use C syntax for figuring tabs
 "set cinkeys=0{,0},:,0#,!^F "place more #'s on new lines, after previous commented lines
+"
+"Trying to force mousewheel to always scroll just a few lines
+"  never scroll entire pages, but doesn't work
+"map <ScrollWheelUp> <C-Y>
+"map <S-ScrollWheelUp> <C-Y>
+"map <ScrollWheelDown> <C-E>
+"map <S-ScrollWheelDown> <C-Y>
