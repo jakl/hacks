@@ -2,11 +2,13 @@
 //symbol   diamond, squiggle, oval
 //shading  solid, striped, open
 //color    red, green, purple
-function card(features){
-  this.number=new number(features.number);
-  this.symbol=new symbol(features.symbol);
-  this.shading=new shading(features.shading);
-  this.color=new color(features.color);
+function card(params){
+  this.number=new number(params.number);
+  this.symbol=new symbol(params.symbol);
+  this.shading=new shading(params.shading);
+  this.color=new color(params.color);
+  this.x=params.x;
+  this.y=params.y;
 };
 add_members(card,{
   rotate_features:function(){
@@ -26,7 +28,9 @@ add_members(card,{
   equals:function(card){
     return card.number.equals(this.number) && card.symbol.equals(this.symbol) && card.shading.equals(this.shading) && card.color.equals(this.color);
   },
-  draw:function(g,x,y){
+  draw:function(g){
+    var x = this.x;
+    var y = this.y;
     switch(this.color.string){
       case 'red':g.fillStyle = g.strokeStyle = '#f00'; break;
       case 'green':g.fillStyle = g.strokeStyle = '#0f0'; break;
@@ -46,10 +50,26 @@ add_members(card,{
     }
   },
   draw_symbol:function(g,x,y,w,h){
+    var striped = this.shading.string == 'striped';
     switch(this.symbol.string){
-      case 'diamond':this.draw_diamond(g,x,y,w,h); break;
-      case 'squiggle':this.draw_squiggle(g,x,y,w,h); break;
-      case 'oval':this.draw_oval(g,x,y,w,h); break;
+      case 'diamond':
+        this.draw_diamond(g,x,y,w,h);
+        if(striped)
+          for (var i = 1; i < 5; i++)
+            this.draw_diamond(g,x+card.width*i/10,y+card.height*i/10,w-card.width*i/5,h-card.height*i/5);
+        break;
+      case 'squiggle':
+        this.draw_squiggle(g,x,y,w,h);
+        if(striped)
+          for (var i = 1; i < 5; i++)
+            this.draw_squiggle(g,x+card.width*i/10,y+card.height*i/10,w-card.width*i/5,h-card.height*i/5);
+         break;
+      case 'oval':
+        this.draw_oval(g,x,y,w,h);
+        if(striped)
+          for (var i = 1; i < 5; i++)
+            this.draw_oval(g,x+card.width*i/10,y+card.height*i/10,w-card.width*i/5,h-card.height*i/5);
+        break;
     }
   },
   draw_diamond:function(g,x,y,w,h){
@@ -69,10 +89,25 @@ add_members(card,{
   draw_oval:function(g,x,y,w,h){
     w=g.canvas.width*w;
     h=g.canvas.height*h;
-    var center_x=g.canvas.width*x+w/2;
-    var center_y=g.canvas.height*y+h/2;
+    x=g.canvas.width*x;
+    y=g.canvas.height*y;
     g.beginPath();
-    g.arc(center_x, center_y, h/2, 0, 2 * Math.PI, false);
+
+    var kappa = .5522848;
+    ox = (w / 2) * kappa; // control point offset horizontal
+    oy = (h / 2) * kappa; // control point offset vertical
+    xe = x + w;           // x-end
+    ye = y + h;           // y-end
+    xm = x + w / 2;       // x-middle
+    ym = y + h / 2;       // y-middle
+
+    g.beginPath();
+    g.moveTo(x, ym);
+    g.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+    g.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+    g.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    g.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+    g.closePath();
     this.shade(g);
   },
   draw_squiggle:function(g,x,y,w,h){
@@ -80,13 +115,13 @@ add_members(card,{
     y=g.canvas.height*y;
     w=g.canvas.width*w;
     h=g.canvas.height*h;
+
     g.beginPath();
-    g.moveTo(x,y);
-    g.lineTo(w+x,h+y);
-    g.lineTo(w+x,y);
-    g.lineTo(x,h+y);
-    g.lineTo(x,y);
-    g.closePath();
+    g.moveTo(w+x,h/2-h/5+y);
+    g.bezierCurveTo(w/2+x,-h/2-h/5+y,w/2+x,h*3/2-h/5+y,x,h/2-h/5+y);
+    g.lineTo(x,h/2+h/5+y);
+    g.bezierCurveTo(w/2+x,h*3/2+h/5+y,w/2+x,-h/2+h/5+y,w+x,h/2+h/5+y);
+    g.lineTo(w+x,h/2-h/5+y);
     this.shade(g);
   },
   shade:function(g){

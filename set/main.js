@@ -1,6 +1,6 @@
 var main = {
   up:false,down:false,left:false,right:false,space:false,other:false,
-  number:'one',symbol:'diamond',shading:'solid',color:'red',
+  number:'one',symbol:'diamond',shading:'striped',color:'red',
   title:'The Game of Set',
 
   tic:function(){
@@ -30,12 +30,12 @@ var main = {
     g.fillRect(0,0,this.g.canvas.width,this.g.canvas.height);
 
     var c;
-    c = new card({number:this.number,symbol:this.symbol,shading:this.shading,color:this.color});
-    c.draw(g,0,0);
-    c = new card({number:1,symbol:1,shading:1,color:1});
-    c.draw(g,.3,.3);
-    c = new card({number:2,symbol:2,shading:2,color:2});
-    c.draw(g,.6,.6);
+    c = new card({number:this.number,symbol:this.symbol,shading:this.shading,color:this.color,x:0,y:0});
+    c.draw(g);
+    c = new card({number:1,symbol:1,shading:1,color:1,x:.3,y:.3});
+    c.draw(g);
+    c = new card({number:2,symbol:2,shading:'solid',color:2,x:.6,y:.6});
+    c.draw(g);
 
     this.draw_controls();
   },
