@@ -14,7 +14,11 @@ var main = {
   },
   init:function(){
     this.g = document.getElementById('canvas').getContext('2d');
-    this.g.lineWidth = 10;
+    add_statics(card,{
+        red_stripe:this.g.createPattern(get_image('red_stripe.png'),'repeat'),
+        green_stripe:this.g.createPattern(get_image('green_stripe.png'),'repeat'),
+        purple_stripe:this.g.createPattern(get_image('purple_stripe.png'),'repeat'),
+    });
 
     //document.onmouseup = function(e){}
     //document.onmousedown = function(e){}
@@ -43,6 +47,10 @@ var main = {
     this.g.fillStyle = '#ccc';
     this.draw_control_y = 40;
     this.draw_control(this.title);
+    this.draw_control('number   one, two, three');
+    this.draw_control('symbol   diamond, squiggle, oval');
+    this.draw_control('shading  solid, striped, open');
+    this.draw_control('color    red, green, purple');
   },
   draw_control:function(message){
     this.g.fillText(message,this.g.canvas.width/2,this.draw_control_y+=20);

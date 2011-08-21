@@ -31,11 +31,18 @@ add_members(card,{
   draw:function(g){
     var x = this.x;
     var y = this.y;
-    switch(this.color.string){
-      case 'red':g.fillStyle = g.strokeStyle = '#f00'; break;
-      case 'green':g.fillStyle = g.strokeStyle = '#0f0'; break;
-      case 'purple':g.fillStyle = g.strokeStyle = '#308'; break;
-    }
+    if(this.shading.string == 'striped')
+      switch(this.color.string){
+        case 'red':g.fillStyle = g.strokeStyle = card.red_stripe; break;
+        case 'green':g.fillStyle = g.strokeStyle = card.green_stripe; break;
+        case 'purple':g.fillStyle = g.strokeStyle = card.purple_stripe; break;
+      }
+    else
+      switch(this.color.string){
+        case 'red':g.fillStyle = g.strokeStyle = '#f00'; break;
+        case 'green':g.fillStyle = g.strokeStyle = '#0f0'; break;
+        case 'purple':g.fillStyle = g.strokeStyle = '#00f'; break;
+      }
     switch(this.number.string){
       case 'one':this.draw_symbol(g,x,y,card.width,card.height); break;
       case 'two':
@@ -52,24 +59,9 @@ add_members(card,{
   draw_symbol:function(g,x,y,w,h){
     var striped = this.shading.string == 'striped';
     switch(this.symbol.string){
-      case 'diamond':
-        this.draw_diamond(g,x,y,w,h);
-        if(striped)
-          for (var i = 1; i < 5; i++)
-            this.draw_diamond(g,x+card.width*i/10,y+card.height*i/10,w-card.width*i/5,h-card.height*i/5);
-        break;
-      case 'squiggle':
-        this.draw_squiggle(g,x,y,w,h);
-        if(striped)
-          for (var i = 1; i < 5; i++)
-            this.draw_squiggle(g,x+card.width*i/10,y+card.height*i/10,w-card.width*i/5,h-card.height*i/5);
-         break;
-      case 'oval':
-        this.draw_oval(g,x,y,w,h);
-        if(striped)
-          for (var i = 1; i < 5; i++)
-            this.draw_oval(g,x+card.width*i/10,y+card.height*i/10,w-card.width*i/5,h-card.height*i/5);
-        break;
+      case 'diamond': this.draw_diamond(g,x,y,w,h); break;
+      case 'squiggle': this.draw_squiggle(g,x,y,w,h); break;
+      case 'oval': this.draw_oval(g,x,y,w,h); break;
     }
   },
   draw_diamond:function(g,x,y,w,h){
@@ -127,7 +119,7 @@ add_members(card,{
   shade:function(g){
     switch(this.shading.string){
       case 'solid':g.fill(); break;
-      case 'striped':g.stroke(); break;
+      case 'striped':g.fill(); break;
       case 'open':g.stroke(); break;
     }
   },
