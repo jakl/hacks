@@ -20,7 +20,6 @@ set title "set terminal title to file name
 set nowrapscan
 set nowrap
 colorscheme elflord "no dark blue, and pretty syntax colors
-map <C-T> :tabnew
 
 "complete current word with tab, looking upwards for matches
 inoremap <TAB> <C-P> 
