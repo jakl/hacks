@@ -24,6 +24,7 @@ au BufWinLeave * mkview "save folds when closing vim
 au BufWinEnter * silent loadview "load saved folds when reopening a file
 
 "complete current word with tab, looking upwards for matches
+"use <ctrl>v<tab> if you need an actual tab
 inoremap <TAB> <C-P>
 "r replaces visual selection with copy/paste buffer
 vmap r "_dP
