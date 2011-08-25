@@ -17,12 +17,14 @@ set mouse=a "mouse compatability
 set autoread "reload changed files when unedited
 set linebreak "wrap lines at natural word dividers
 set title "set terminal title to file name
-set nowrapscan
-set nowrap
+set nowrapscan "don't wrap back to top searches
+set nowrap "don't wrap long lines of text. ':set wrap' to reenable
 colorscheme elflord "no dark blue, and pretty syntax colors
+au BufWinLeave * mkview "save folds when closing vim
+au BufWinEnter * silent loadview "load saved folds when reopening a file
 
 "complete current word with tab, looking upwards for matches
-inoremap <TAB> <C-P> 
+inoremap <TAB> <C-P>
 "r replaces visual selection with copy/paste buffer
 vmap r "_dP
 
