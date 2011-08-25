@@ -9,6 +9,7 @@ function card(params){
   this.color=new color(params.color);
   this.x=params.x;
   this.y=params.y;
+  this.location=params.location;
 };
 add_members(card,{
   rotate_features:function(){
@@ -28,9 +29,9 @@ add_members(card,{
   equals:function(card){
     return card.number.equals(this.number) && card.symbol.equals(this.symbol) && card.shading.equals(this.shading) && card.color.equals(this.color);
   },
-  draw:function(g){
-    var x = this.x;
-    var y = this.y;
+  draw:function(g,x,y){
+    x = this.x || x;
+    y = this.y || y;
     if(this.shading.string == 'striped')
       switch(this.color.string){
         case 'red':g.fillStyle = g.strokeStyle = card.red_stripe; break;
@@ -125,7 +126,7 @@ add_members(card,{
   },
 });
 add_statics(card,{
-  width:1/4,height:1/3,
+  width:1/3,height:1/4,
   increment_offsets:function(){number.offset++;symbol.offset++;shading.offset++;color.offset++;},
   get_third:function(a,b){
     if(a==b)

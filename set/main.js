@@ -20,6 +20,10 @@ var main = {
         purple_stripe:this.g.createPattern(get_image('purple_stripe.png'),'repeat'),
     });
 
+    cards.init();
+    for(var i = 0; i < 12; i++)
+      cards.draw_card();
+
     //document.onmouseup = function(e){}
     //document.onmousedown = function(e){}
     //document.onmousemove = function(e){}
