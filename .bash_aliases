@@ -1,3 +1,4 @@
+#!/bin/sh
 alias search='aptitude search'
 alias show='aptitude show'
 alias instal='sudo aptitude install'
