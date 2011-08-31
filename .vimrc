@@ -20,8 +20,6 @@ set title "set terminal title to file name
 set nowrapscan "don't wrap back to top searches
 set nowrap "don't wrap long lines of text. ':set wrap' to reenable
 colorscheme elflord "no dark blue, and pretty syntax colors
-au BufWinLeave * mkview "save folds when closing vim
-au BufWinEnter * silent loadview "load saved folds when reopening a file
 let g:LargeFile=80 "don't syntax highlight enourmous files
 
 "complete current word with tab, looking upwards for matches
@@ -29,6 +27,11 @@ let g:LargeFile=80 "don't syntax highlight enourmous files
 inoremap <TAB> <C-P>
 "r replaces visual selection with copy/paste buffer
 vmap r "_dP
+
+"Saves all settings per file, but generates annoying errors when piping to vim
+"au BufWinLeave * mkview "save folds when closing vim
+"au BufWinEnter * silent loadview "load saved folds when reopening a file
+
 
 "Works only in recent vim update, not installed on most systems yet
 "set undodir=~/.vim/undodir "undo between sessions
