@@ -22,6 +22,7 @@ set nowrap "don't wrap long lines of text. ':set wrap' to reenable
 colorscheme elflord "no dark blue, and pretty syntax colors
 au BufWinLeave * mkview "save folds when closing vim
 au BufWinEnter * silent loadview "load saved folds when reopening a file
+let g:LargeFile=80 "don't syntax highlight enourmous files
 
 "complete current word with tab, looking upwards for matches
 "use <ctrl>v<tab> if you need an actual tab
