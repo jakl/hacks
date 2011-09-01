@@ -47,4 +47,4 @@ get_box() {
 }
 
 #make the input line in the terminal only show the deepest dir and git info
-export PS1="\$(get_box):\$(get_dir)\$(parse_git_branch)$ "
+export PS1="\$(whoami)@\$(get_box):\$(get_dir)\$(parse_git_branch)$ "
