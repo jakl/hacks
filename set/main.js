@@ -22,7 +22,7 @@ var main = {
 
     cards.init();
     for(var i = 0; i < 12; i++)
-      cards.draw_card();
+      cards.paint();
 
     //document.onmouseup = function(e){}
     //document.onmousedown = function(e){}
@@ -39,25 +39,25 @@ var main = {
 
     var c;
     c = new card({number:this.number,symbol:this.symbol,shading:this.shading,color:this.color,x:0,y:0});
-    c.draw(g);
+    c.paint(g);
     c = new card({number:1,symbol:1,shading:1,color:1,x:.3,y:.3});
-    c.draw(g);
+    c.paint(g);
     c = new card({number:2,symbol:2,shading:'solid',color:2,x:.6,y:.6});
-    c.draw(g);
+    c.paint(g);
 
-    this.draw_controls();
+    this.paint_controls();
   },
-  draw_controls:function(){
+  paint_controls:function(){
     this.g.fillStyle = '#ccc';
-    this.draw_control_y = 40;
-    this.draw_control(this.title);
-    this.draw_control('number   one, two, three');
-    this.draw_control('symbol   diamond, squiggle, oval');
-    this.draw_control('shading  solid, striped, open');
-    this.draw_control('color    red, green, purple');
+    this.paint_control_y = 40;
+    this.paint_control(this.title);
+    this.paint_control('number   one, two, three');
+    this.paint_control('symbol   diamond, squiggle, oval');
+    this.paint_control('shading  solid, striped, open');
+    this.paint_control('color    red, green, purple');
   },
-  draw_control:function(message){
-    this.g.fillText(message,this.g.canvas.width/2,this.draw_control_y+=20);
+  paint_control:function(message){
+    this.g.fillText(message,this.g.canvas.width/2,this.paint_control_y+=20);
   },
   key_down:function(e){
       if (e.keyCode == 39) {right=true;}

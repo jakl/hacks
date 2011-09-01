@@ -7,7 +7,7 @@ var cards = {
     for(var color = 0; color <=2; color++)
       this.deck.push(new card({number:number,symbol:symbol,shading:shading,color:color}));
   },
-  draw_card:function(){
+  paint:function(){
     deck[Math.random()*deck.length].location = 'play';
   },
   paint:function(g){
@@ -20,6 +20,6 @@ var cards = {
     var i = 0;
     for(var x = 0; x < 3; x++)
       for(var y = 0; y < 4; y++)
-        board[i++].draw(g,x/3,y/4);
+        board[i++].paint(g,x/3,y/4);
   },
 }

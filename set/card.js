@@ -29,7 +29,7 @@ add_members(card,{
   equals:function(card){
     return card.number.equals(this.number) && card.symbol.equals(this.symbol) && card.shading.equals(this.shading) && card.color.equals(this.color);
   },
-  draw:function(g,x,y){
+  paint:function(g,x,y){
     x = this.x || x;
     y = this.y || y;
     if(this.shading.string == 'striped')
@@ -45,27 +45,27 @@ add_members(card,{
         case 'purple':g.fillStyle = g.strokeStyle = '#00f'; break;
       }
     switch(this.number.string){
-      case 'one':this.draw_symbol(g,x,y,card.width,card.height); break;
+      case 'one':this.paint_symbol(g,x,y,card.width,card.height); break;
       case 'two':
-        this.draw_symbol(g,x,y,card.width,card.height/2);
-        this.draw_symbol(g,x,y+card.height/2,card.width,card.height/2);
+        this.paint_symbol(g,x,y,card.width,card.height/2);
+        this.paint_symbol(g,x,y+card.height/2,card.width,card.height/2);
         break;
       case 'three':
-        this.draw_symbol(g,x,y,card.width,card.height/3);
-        this.draw_symbol(g,x,y+card.height/3,card.width,card.height/3);
-        this.draw_symbol(g,x,y+card.height*2/3,card.width,card.height/3);
+        this.paint_symbol(g,x,y,card.width,card.height/3);
+        this.paint_symbol(g,x,y+card.height/3,card.width,card.height/3);
+        this.paint_symbol(g,x,y+card.height*2/3,card.width,card.height/3);
         break;
     }
   },
-  draw_symbol:function(g,x,y,w,h){
+  paint_symbol:function(g,x,y,w,h){
     var striped = this.shading.string == 'striped';
     switch(this.symbol.string){
-      case 'diamond': this.draw_diamond(g,x,y,w,h); break;
-      case 'squiggle': this.draw_squiggle(g,x,y,w,h); break;
-      case 'oval': this.draw_oval(g,x,y,w,h); break;
+      case 'diamond': this.paint_diamond(g,x,y,w,h); break;
+      case 'squiggle': this.paint_squiggle(g,x,y,w,h); break;
+      case 'oval': this.paint_oval(g,x,y,w,h); break;
     }
   },
-  draw_diamond:function(g,x,y,w,h){
+  paint_diamond:function(g,x,y,w,h){
     x=g.canvas.width*x;
     y=g.canvas.height*y;
     w=g.canvas.width*w;
@@ -79,7 +79,7 @@ add_members(card,{
     g.closePath();
     this.shade(g);
   },
-  draw_oval:function(g,x,y,w,h){
+  paint_oval:function(g,x,y,w,h){
     w=g.canvas.width*w;
     h=g.canvas.height*h;
     x=g.canvas.width*x;
@@ -103,7 +103,7 @@ add_members(card,{
     g.closePath();
     this.shade(g);
   },
-  draw_squiggle:function(g,x,y,w,h){
+  paint_squiggle:function(g,x,y,w,h){
     x=g.canvas.width*x;
     y=g.canvas.height*y;
     w=g.canvas.width*w;
