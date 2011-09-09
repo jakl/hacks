@@ -15,6 +15,7 @@ alias bc='bc -l'
 alias s='screen -DR'
 alias gs='git status'
 alias gp='git pull --rebase'
+alias gd='git diff --cached --color -b -w'
 
 alias ..='cd ..'
 alias ...='cd ../..'
