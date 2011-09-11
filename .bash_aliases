@@ -16,6 +16,8 @@ alias s='screen -DR'
 alias gs='git status'
 alias gp='git pull --rebase'
 alias gd='git diff --cached --color -b -w'
+alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit --date=relative'
+alias gsh='git show --date=relative --color'
 
 alias ..='cd ..'
 alias ...='cd ../..'
