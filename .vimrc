@@ -21,29 +21,10 @@ set nowrapscan "don't wrap back to top searches
 set nowrap "don't wrap long lines of text. ':set wrap' to reenable
 colorscheme elflord "no dark blue, and pretty syntax colors
 let g:LargeFile=80 "don't syntax highlight enourmous files
+"call pathogen#infect() "autoload vim modules installed through git
 
 "complete current word with tab, looking upwards for matches
 "use <ctrl>v<tab> if you need an actual tab
 inoremap <TAB> <C-P>
 "r replaces visual selection with copy/paste buffer
 vmap r "_dP
-
-"Saves all settings per file, but generates annoying errors when piping to vim
-"au BufWinLeave * mkview "save folds when closing vim
-"au BufWinEnter * silent loadview "load saved folds when reopening a file
-
-
-"Works only in recent vim update, not installed on most systems yet
-"set undodir=~/.vim/undodir "undo between sessions
-"set undofile
-
-"not sure why I have these two or what they do exactly; comments maybe wrong
-"set cindent "use C syntax for figuring tabs
-"set cinkeys=0{,0},:,0#,!^F "place more #'s on new lines, after previous commented lines
-"
-"Trying to force mousewheel to always scroll just a few lines
-"  never scroll entire pages, but doesn't work
-"map <ScrollWheelUp> <C-Y>
-"map <S-ScrollWheelUp> <C-Y>
-"map <ScrollWheelDown> <C-E>
-"map <S-ScrollWheelDown> <C-Y>
