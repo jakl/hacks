@@ -21,6 +21,7 @@ set nowrapscan "don't wrap back to top searches
 set nowrap "don't wrap long lines of text. ':set wrap' to reenable
 colorscheme elflord "no dark blue, and pretty syntax colors
 let g:LargeFile=80 "don't syntax highlight enourmous files
+autocmd BufWritePre * :%s/\s\+$//e
 "call pathogen#infect() "autoload vim modules installed through git
 
 "complete current word with tab, looking upwards for matches
@@ -28,3 +29,4 @@ let g:LargeFile=80 "don't syntax highlight enourmous files
 inoremap <TAB> <C-P>
 "r replaces visual selection with copy/paste buffer
 vmap r "_dP
+"set foldnestmax=1 "Will be used in an auto-folding script later
