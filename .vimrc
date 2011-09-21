@@ -19,14 +19,17 @@ set linebreak "wrap lines at natural word dividers
 set title "set terminal title to file name
 set nowrapscan "don't wrap back to top searches
 set nowrap "don't wrap long lines of text. ':set wrap' to reenable
-colorscheme elflord "no dark blue, and pretty syntax colors
-let g:LargeFile=80 "don't syntax highlight enourmous files
-autocmd BufWritePre * :%s/\s\+$//e
-"call pathogen#infect() "autoload vim modules installed through git
+colorscheme elflord "no dark blue, but instead use pretty syntax colors
+autocmd BufWritePre * :%s/\s\+$//e "Delete trailing whitespace on write
 
 "complete current word with tab, looking upwards for matches
 "use <ctrl>v<tab> if you need an actual tab
 inoremap <TAB> <C-P>
-"r replaces visual selection with copy/paste buffer
+"r replaces visual selection with yank's buffer
 vmap r "_dP
-"set foldnestmax=1 "Will be used in an auto-folding script later
+
+"call pathogen#infect() "autoload vim modules installed through git
+"git://github.com/tpope/vim-pathogen.git
+"symlink pathogen.vim to .vim/autoload
+"cd .vim/bundle and git clone vim modules!
+"like git://github.com/kchmck/vim-coffee-script.git
