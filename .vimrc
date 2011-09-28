@@ -21,6 +21,12 @@ set nowrapscan "don't wrap back to top searches
 set nowrap "don't wrap long lines of text. ':set wrap' to reenable
 colorscheme elflord "no dark blue, but instead use pretty syntax colors
 autocmd BufWritePre * :%s/\s\+$//e "Delete trailing whitespace on write
+let @z='/{V%zfj' "fold next set of matching braces
+let @x='gg:set foldmethod=manual1000@z' "fold whole file
+"zM closes all folds, zR opens all, zo opens one, zc closes one
+
+"space bar creates folds for entire file
+"map <space> @x
 
 "complete current word with tab, looking upwards for matches
 "use <ctrl>v<tab> if you need an actual tab
