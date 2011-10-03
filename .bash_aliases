@@ -6,7 +6,7 @@ alias remove='sudo aptitude remove'
 alias update='sudo aptitude update'
 alias upgrade='sudo aptitude safe-upgrade'
 
-alias ls='ls -F --color=auto'
+alias ls='ls -hF --group-directories-first --color=auto --sort=extension'
 alias la="ls -a | grep '^\.' | column"
 alias ff='find . -type f -iname'
 alias acp='ack -i --perl'
@@ -15,7 +15,8 @@ alias bc='bc -l'
 alias s='screen -DR'
 alias gs='git status'
 alias gp='git pull --rebase'
-alias gd='git diff --cached --color -b -w'
+alias gds='git diff --staged --color -w'
+alias gd='git diff --color -w'
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit --date=relative'
 alias gsh='git show --date=relative --color'
 
@@ -24,10 +25,6 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias ......='cd ../../../../..'
-
-#Wifi Hacking Much?
-alias amstart='sudo airmon-ng start wlan0'
-alias amstop='sudo airmon-ng stop wlan0'
 
 when() {
   history | grep -i $1 | grep -v when
