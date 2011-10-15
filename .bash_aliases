@@ -25,8 +25,11 @@ alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias ......='cd ../../../../..'
 
-when() { 
-  history | grep -i $1 | grep -v when 
+#Wifi Hacking Much?
+alias am='sudo airmon-ng start wlan0'
+
+when() {
+  history | grep -i $1 | grep -v when
 }
 
 
