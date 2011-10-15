@@ -26,8 +26,8 @@ alias .....='cd ../../../..'
 alias ......='cd ../../../../..'
 
 #Wifi Hacking Much?
-alias am='sudo airmon-ng start wlan0'
-alias amnot='sudo airmon-ng stop wlan0'
+alias amstart='sudo airmon-ng start wlan0'
+alias amstop='sudo airmon-ng stop wlan0'
 
 when() {
   history | grep -i $1 | grep -v when
