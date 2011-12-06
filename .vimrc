@@ -27,6 +27,10 @@ let @x='gg:set foldmethod=manual1000@z' "fold whole file
 
 "space bar creates folds for entire file
 "map <space> @x
+"
+set fillchars=fold:\ "Don't append hyphens - at the end of folds, use spaces
+"Folds respect terminal transparency
+hi Folded ctermbg=none
 
 "complete current word with tab, looking upwards for matches
 "use <ctrl>v<tab> if you need an actual tab

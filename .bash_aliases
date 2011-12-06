@@ -6,6 +6,8 @@ alias remove='sudo aptitude remove'
 alias update='sudo aptitude update'
 alias upgrade='sudo aptitude safe-upgrade'
 
+alias v='vi'
+alias c='cd'
 alias ls='ls -hF --group-directories-first --color=auto --sort=extension'
 alias la="ls -a | grep '^\.' | column"
 alias ff='find . -type f -iname'
