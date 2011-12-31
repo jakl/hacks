@@ -1,0 +1,15 @@
+html {
+    color:green;
+    background:black;
+    font-family:monospace;
+    border-color:lime;
+    text-align:center;
+}
+
+body { font-size:200% }
+h1 { font-size:400% }
+h2 { font-size:200% }
+a:link { color:lime }
+a:visited { color:lime }
+a:hover { color:orange }
+a:active { color:green }
