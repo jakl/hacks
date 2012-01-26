@@ -8,6 +8,7 @@ alias upgrade='sudo aptitude safe-upgrade'
 
 alias v='vi'
 alias c='cd'
+alias l='ls'
 alias ls='ls -hF --group-directories-first --color=auto --sort=extension'
 alias la="ls -a | grep '^\.' | column"
 alias ff='find . -type f -iname'

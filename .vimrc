@@ -20,14 +20,14 @@ set title "set terminal title to file name
 set nowrapscan "don't wrap back to top searches
 set nowrap "don't wrap long lines of text. ':set wrap' to reenable
 colorscheme elflord "no dark blue, but instead use pretty syntax colors
-autocmd BufWritePre * :%s/\s\+$//e "Delete trailing whitespace on write
+autocmd BufWritePre * :call Preserve("%s/\\s\\+$//e") "Delete trailing whitespace on write
 let @z='/{V%zfj' "fold next set of matching braces
 let @x='gg:set foldmethod=manual1000@z' "fold whole file
 "zM closes all folds, zR opens all, zo opens one, zc closes one
 
 "space bar creates folds for entire file
 "map <space> @x
-"
+
 set fillchars=fold:\ "Don't append hyphens - at the end of folds, use spaces
 "Folds respect terminal transparency
 hi Folded ctermbg=none
@@ -43,3 +43,13 @@ vmap r "_dP
 "symlink pathogen.vim to .vim/autoload
 "cd .vim/bundle and git clone vim modules!
 "like git://github.com/kchmck/vim-coffee-script.git
+"
+
+function! Preserve(command)
+    let _s=@/
+    let l = line(".")
+    let c = col(".")
+    execute a:command
+    let @/=_s
+    call cursor(l, c)
+endfunction
