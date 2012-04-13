@@ -1,10 +1,10 @@
 #!/bin/sh
 alias search='aptitude search'
 alias show='aptitude show'
-alias instal='sudo aptitude install'
-alias remove='sudo aptitude remove'
-alias update='sudo aptitude update'
-alias upgrade='sudo aptitude safe-upgrade'
+alias instal='sudo apt-get install'
+alias remove='sudo apt-get remove'
+alias update='sudo apt-get update'
+alias upgrade='sudo apt-get dist-upgrade'
 
 alias v='vi'
 alias c='cd'
