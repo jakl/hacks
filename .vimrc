@@ -1,4 +1,4 @@
-set relativenumber "line numbers relative to cursor
+set number "line numbers
 set tabstop=4 "spaces for a tab
 set shiftwidth=4 "spaces for indent
 set softtabstop=4 "backspace deletes spaces that filled for tab
@@ -65,7 +65,3 @@ nmap <silent> <C-j> :wincmd j<CR>
 nmap <silent> <C-h> :wincmd h<CR>
 nmap <silent> <C-l> :wincmd l<CR>
 nmap <silent> <C-n> :vsplit <CR> "ctrl+n create new buffer
-
-"Use relative line numbers in command mode
-autocmd InsertEnter * :set number
-autocmd InsertLeave * :set relativenumber
