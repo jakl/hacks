@@ -3,7 +3,7 @@ run=->
     input = process.argv[2]
 
     unless input
-        console.log 'coffee ' + process.argv[1] + " '[x-z]?[pP]a[s5]{1,2}word\\d+'"
+        console.log 'coffee ' + process.argv[1] + " '([x-z]?Pa[s5]{2}word\\d+|Hax\\w?)'"
         process.exit 0
 
     generate input
@@ -18,6 +18,12 @@ generate=(rest, prefix='')->
     else if rest[0] is '\\' and rest[0..1] of cache
         chars = rest[0..1]
         rest = rest[2..]
+    else if rest[0] is '('
+        endParen = rest.indexOf ')'
+        options = rest[1...endParen].split '|'
+        rest = rest[endParen+1..]
+        generate option+rest, prefix for option in options
+        return 1
     else
         chars = rest[0]
         rest = rest[1..]
