@@ -44,7 +44,9 @@ vmap r "_dP
 "git://github.com/tpope/vim-pathogen.git
 "symlink pathogen.vim to .vim/autoload
 "cd .vim/bundle and git clone vim modules!
-"like git://github.com/kchmck/vim-coffee-script.git
+"git clone git://github.com/kchmck/vim-coffee-script.git
+"git clone https://github.com/scrooloose/nerdtree.git
+"git clone https://github.com/fholgado/minibufexpl.vim.git
 "
 "https://github.com/majutsushi/tagbar.git
 "nmap <F8> :TagbarToggle<CR>
