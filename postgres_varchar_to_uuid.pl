@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 use DBI;
-my $dbh = DBI->connect('dbi:Pg:dbname=_FAKE_DB_NAME_','_FAKE_USER_NAME','_FAKE_PASS_WORD_');
+my $dbh = DBI->connect('dbi:Pg:dbname=_FAKE_DB_NAME_','_FAKE_USER_NAME_','_FAKE_PASS_WORD_');
 
 my @tables = @{$dbh->selectcol_arrayref("select tablename from pg_tables where schemaname='_FAKE_SCHEMA_NAME_'")};
 my @fks;
@@ -13,7 +13,7 @@ for my $table (@tables) {
       "SELECT tc.constraint_name, tc.table_name, kcu.column_name, ccu.table_name AS foreign_table_name, ccu.column_name AS foreign_column_name FROM information_schema.table_constraints AS tc JOIN information_schema.key_column_usage AS kcu ON tc.constraint_name = kcu.constraint_name JOIN information_schema.constraint_column_usage AS ccu ON ccu.constraint_name = tc.constraint_name WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name='$table'"
     )};
 
-    $dbh->do('alter table $table drop CONSTRAINT ' . $foreign_key[0]) for my $foreign_key (@cur_fks);
+    $dbh->do("alter table $table drop CONSTRAINT " . $_->[0]) for (@cur_fks);
 
     push @fks, @cur_fks;
 }
@@ -33,10 +33,10 @@ for my $table (@tables) {
 #loop through remembered foreign keys
 #  recreate foreign key
 for my $fk (@fks) {
-    my $constraint = $fk[0];
-    my $table = $fk[1];
-    my $column = $fk[2];
-    my $foreign_table = $fk[3];
-    my $foreign_column = $fk[4];
+    my $constraint = $fk->[0];
+    my $table = $fk->[1];
+    my $column = $fk->[2];
+    my $foreign_table = $fk->[3];
+    my $foreign_column = $fk->[4];
     $dbh->do("ALTER TABLE $table ADD CONSTRAINT $constraint FOREIGN KEY ($column) REFERENCES $foreign_table ($foreign_column)");
 }
