@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 #Given a schema, change all varchar ID columns to the more efficient UUID type
+#Operates on varchar columns where the column name matches id or %_id
 use DBI;
 my $dbh = DBI->connect('dbi:Pg:dbname=_FAKE_DB_NAME_','_FAKE_USER_NAME_','_FAKE_PASS_WORD_');
 my @tables = @{$dbh->selectcol_arrayref("select tablename from pg_tables where schemaname='_FAKE_SCHEMA_NAME_'")};
@@ -22,7 +23,6 @@ for my $table (@tables) {
 #  loop through varchar columns with name='id' or name like '%_id'
 #    switch column type to uuid, converting all values
 for my $table (@tables) {
-
     for my $column (@{$dbh->selectcol_arrayref(
         "SELECT column_name FROM information_schema.columns WHERE table_name = '$table' and (column_name = 'id' or column_name like '%_id') and data_type = 'character varying'"
     )}) {
