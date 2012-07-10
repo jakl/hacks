@@ -11,14 +11,19 @@ use DBI;
 execute(@ARGV);
 
 sub execute {
-    my $example = "perl $0 db_name schema_name username password\n";
+    my $example = "perl $0 db_name schema_name username password host\n";
 
     my $db_name = shift || die $example;
     my $schema_name = shift || die $example;
     my $username = shift || die $example;
     my $password = shift || die $example;
+    my $host = shift;
+    unless ($host) {
+        warn "using localhost\n";
+        $host = 'localhost';
+    }
 
-    my $dbh = DBI->connect("dbi:Pg:dbname=$db_name",$username,$password);
+    my $dbh = DBI->connect("dbi:Pg:dbname=$db_name;host=$host;",$username,$password);
     my @tables = @{$dbh->selectcol_arrayref("select tablename from pg_tables where schemaname='$schema_name'")};
 
     convert_varchar_id_columns_to_uuid($dbh, @tables);
