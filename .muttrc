@@ -34,3 +34,10 @@ color attachment green default
 color tilde green default
 
 alias jdoe John Doe <anon@anon.anon>
+
+# tab to jump to new messages in the current folder
+# single quote ' to jump to new messages in other folders
+# capital M to mark all messages as read in the current folder
+# lowercase m to create a new message
+# g to replyall on a message
+# r to reply to sender on a message
