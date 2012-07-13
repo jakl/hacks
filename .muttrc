@@ -1,0 +1,36 @@
+set include=yes
+set abort_nosubject=yes
+set abort_unmodified=yes
+set pager_index_lines=5
+set spoolfile="imaps://_FAKE_USER_:_FAKE_PASSWORD_@_FAKE_IMAP_SERVER_/INBOX"
+set folder="imaps://_FAKE_USER_@_FAKE_IMAP_SERVER_/INBOX"
+set record="=Sent"
+set postponed="=Drafts"
+set ssl_starttls=yes
+set ssl_force_tls=yes
+set pager_stop=yes
+set imap_check_subscribed
+set mail_check=60
+set header_cache=~/.hcache
+set message_cachedir=~/.mcache
+set net_inc=5
+set sort=threads
+set from='_FAKE_FROM_ADDRESS_'
+set realname='_FAKE_REAL_NAME_'
+set use_from=yes
+bind index \' next-unread-mailbox
+auto_view text/html
+macro index M "T.*\n;WN" "Mark all messages as read"
+
+color normal default default
+color hdrdefault green default
+color quoted green default
+color quoted1 green default
+color signature green default
+color status green default
+color indicator yellow default
+color normal green default
+color attachment green default
+color tilde green default
+
+alias jdoe John Doe <anon@anon.anon>
