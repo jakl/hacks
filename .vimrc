@@ -1,7 +1,7 @@
 set number "line numbers
-set tabstop=4 "spaces for a tab
-set shiftwidth=4 "spaces for indent
-set softtabstop=4 "backspace deletes spaces that filled for tab
+set tabstop=2 "spaces for a tab
+set shiftwidth=2 "spaces for indent
+set softtabstop=2 "backspace deletes spaces that filled for tab
 set expandtab "use spaces rather than tabs
 set smartindent "indents after {
 set autoindent "keep the current indent for new lines
@@ -52,6 +52,8 @@ vmap r "_dP
 "nmap <F8> :TagbarToggle<CR>
 map <leader>t :TagbarToggle<CR>
 
+map <leader>n :NERDTreeToggle<CR>
+
 function! Preserve(command)
     let _s=@/
     let l = line(".")
@@ -67,3 +69,17 @@ nmap <silent> <C-j> :wincmd j<CR>
 nmap <silent> <C-h> :wincmd h<CR>
 nmap <silent> <C-l> :wincmd l<CR>
 nmap <silent> <C-n> :vsplit <CR> "ctrl+n create new buffer
+
+vmap <C-c> y:call system("pbcopy", getreg("\""))<CR>
+
+" Search for selected text, forwards or backwards.
+vnoremap <silent> * :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
