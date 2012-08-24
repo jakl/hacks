@@ -24,6 +24,7 @@ alias gds='git diff --staged --color -w'
 alias gd='git diff --color -w'
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit --date=relative'
 alias gsh='git show --date=relative --color'
+alias flushdns="dscacheutil -flushcache"
 
 alias ..='cd ..'
 alias ...='cd ../..'
