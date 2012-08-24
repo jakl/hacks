@@ -56,10 +56,6 @@ inoremap <TAB> <C-P>
 "r replaces visual selection with yank's buffer
 vmap r "_dP
 
-map <leader>t :TagbarToggle<CR>
-map <leader>n :NERDTreeToggle<CR>
-
-
 "Use ctrl+h,j,k,l to move among split buffers
 nmap <silent> <C-k> :wincmd k<CR>
 nmap <silent> <C-j> :wincmd j<CR>
@@ -67,6 +63,10 @@ nmap <silent> <C-h> :wincmd h<CR>
 nmap <silent> <C-l> :wincmd l<CR>
 nmap <silent> <C-n> :bp<CR>
 nmap <silent> <C-m> :bn<CR>
+map <leader>t :TagbarToggle<CR>
+map <leader>n :NERDTreeToggle<CR>
+nnoremap j gj
+nnoremap k gk
 
 "ctrl+c in visual mode will copy to mac system buffer
 vmap <C-c> y:call system("pbcopy", getreg("\""))<CR>
