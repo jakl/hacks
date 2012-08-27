@@ -1,4 +1,5 @@
 "git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
+"mkdir ~/.vim/undodir
 
 "Must `apt-get install git` and run above clone! These Bundle commands won't work otherwise.
 set rtp+=~/.vim/bundle/vundle
@@ -10,7 +11,7 @@ Bundle 'fholgado/minibufexpl.vim'
 Bundle 'majutsushi/tagbar'
 Bundle 'leshill/vim-json'
 
-"mkdir ~/.vim/undodir
+" .vim/undodir/  must exist
 set undodir=~/.vim/undodir "persistent undos between editing sessions
 set undofile "Doesn't work in ubuntu 10.04
 
@@ -61,10 +62,16 @@ nmap <silent> <C-k> :wincmd k<CR>
 nmap <silent> <C-j> :wincmd j<CR>
 nmap <silent> <C-h> :wincmd h<CR>
 nmap <silent> <C-l> :wincmd l<CR>
+
+"ctrl+n/m to switch buffers
 nmap <silent> <C-n> :bp<CR>
 nmap <silent> <C-m> :bn<CR>
+
+"Backslash t to open tagbar, and backslash n to open NerdTree
 map <leader>t :TagbarToggle<CR>
 map <leader>n :NERDTreeToggle<CR>
+
+"j and k move inside wrapped lines as well
 nnoremap j gj
 nnoremap k gk
 
