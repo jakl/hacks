@@ -8,8 +8,8 @@ alias upgrade='sudo apt-get dist-upgrade'
 
 alias v='vi'
 alias c='cd'
-alias ls='ls -hFG'
 alias l='ls'
+alias ls='ls -hF --group-directories-first --color=auto --sort=extension'
 alias la="ls -a | grep '^\.' | column"
 alias ff='find . -type f -iname'
 alias acp='ack -i --perl'
