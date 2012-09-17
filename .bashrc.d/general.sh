@@ -18,13 +18,14 @@ alias bc='bc -l'
 alias gs='git status'
 alias ga='git add'
 alias gc='git commit'
-alias gph='git push'
-alias gp='git pull --rebase'
+alias gp='git pull --ff-only --all'
 alias gds='git diff --staged --color -w'
 alias gd='git diff --color -w'
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit --date=relative'
+alias glm='gl --author=koval'
 alias gsh='git show --date=relative --color'
 alias flushdns="dscacheutil -flushcache"
+alias avg="awk '{a=a+\$1}END{print a/NR}';"
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -57,3 +58,6 @@ get_box() {
 
 #make the input line in the terminal only show the deepest dir and git info
 export PS1="\$(whoami)@\$(get_box):\$(get_dir)\$(parse_git_branch)$ "
+
+export HISTSIZE=100000
+export HISTFILESIZE=100000
