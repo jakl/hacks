@@ -10,6 +10,16 @@ Bundle 'scrooloose/nerdtree'
 Bundle 'fholgado/minibufexpl.vim'
 Bundle 'majutsushi/tagbar'
 Bundle 'leshill/vim-json'
+Bundle 'juvenn/mustache'
+Bundle 'tpope/vim-surround'
+Bundle 'digitaltoad/vim-jade'
+Bundle 'wavded/vim-stylus'
+Bundle 'pdurbin/vim-tsv'
+Bundle 'rodjek/vim-puppet'
+Bundle 'godlygeek/tabular'
+Bundle 'msanders/snipmate.vim'
+Bundle 'scrooloose/syntastic'
+Bundle 'smerrill/vagrant-vim'
 
 " .vim/undodir/  must exist
 set undodir=~/.vim/undodir "persistent undos between editing sessions
@@ -38,6 +48,8 @@ set nowrap "don't wrap long lines of text. ':set wrap' to reenable
 colorscheme elflord "no dark blue, but instead use pretty syntax colors
 set fillchars=fold:\ "Don't append hyphens - at the end of folds, use spaces
 hi Folded ctermbg=none "Folds respect terminal transparency
+set foldmethod=indent
+set foldlevel=20
 
 autocmd BufWritePre * :call Preserve("%s/\\s\\+$//e") "Delete trailing whitespace on write
 function! Preserve(command)
