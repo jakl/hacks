@@ -20,6 +20,7 @@ Bundle 'godlygeek/tabular'
 Bundle 'msanders/snipmate.vim'
 Bundle 'scrooloose/syntastic'
 Bundle 'smerrill/vagrant-vim'
+Bundle 'tpope/vim-rails'
 
 " .vim/undodir/  must exist
 set undodir=~/.vim/undodir "persistent undos between editing sessions

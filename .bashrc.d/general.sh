@@ -62,3 +62,4 @@ export PS1="\$(whoami)@\$(get_box):\$(get_dir)\$(parse_git_branch)$ "
 
 export HISTSIZE=100000
 export HISTFILESIZE=100000
+PATH=`brew --prefix coreutils`/libexec/gnubin:$PATH
