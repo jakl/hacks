@@ -20,6 +20,7 @@ Bundle 'godlygeek/tabular'
 Bundle 'msanders/snipmate.vim'
 Bundle 'scrooloose/syntastic'
 Bundle 'smerrill/vagrant-vim'
+Bundle "pangloss/vim-javascript"
 
 " .vim/undodir/  must exist
 set undodir=~/.vim/undodir "persistent undos between editing sessions
@@ -32,6 +33,7 @@ set softtabstop=2 "backspace deletes spaces that filled for tab
 set expandtab "use spaces rather than tabs
 set smartindent "indents after {
 set autoindent "keep the current indent for new lines
+filetype off "Fix for syntax highlighting
 filetype plugin indent on "detect filetype, indent, load respective plugins
 syntax enable "Local scope syntax highlighting
 set ignorecase "ignore case searches
