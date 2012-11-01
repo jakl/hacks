@@ -34,8 +34,8 @@ alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias ......='cd ../../../../..'
 
-export LESS=-iMXR
-export COLORFGBG="default;default" #for transparant mutt background
+LESS=-iMXR
+COLORFGBG="default;default" #for transparant mutt background
 
 when() {
   history | grep -i $1 | grep -v when
@@ -58,7 +58,7 @@ get_box() {
 }
 
 #make the input line in the terminal only show the deepest dir and git info
-export PS1="\$(whoami)@\$(get_box):\$(get_dir)\$(parse_git_branch)$ "
+PS1="\$(whoami)@\$(get_box):\$(get_dir)\$(parse_git_branch)$ "
 
-export HISTSIZE=100000
-export HISTFILESIZE=100000
+HISTSIZE=100000
+HISTFILESIZE=100000
