@@ -21,6 +21,8 @@ Bundle 'msanders/snipmate.vim'
 Bundle 'scrooloose/syntastic'
 Bundle 'smerrill/vagrant-vim'
 Bundle "pangloss/vim-javascript"
+Bundle 'tpope/vim-rails'
+Bundle 'derekwyatt/vim-scala'
 
 " .vim/undodir/  must exist
 set undodir=~/.vim/undodir "persistent undos between editing sessions
