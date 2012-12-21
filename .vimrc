@@ -13,6 +13,7 @@ Bundle 'juvenn/mustache'
 Bundle 'digitaltoad/vim-jade'
 Bundle 'wavded/vim-stylus'
 Bundle 'derekwyatt/vim-scala'
+Bundle 'depuracao/vim-rdoc'
 
 " .vim/undodir/  must exist
 set undodir=~/.vim/undodir "persistent undos between editing sessions
@@ -43,7 +44,8 @@ colorscheme elflord "no dark blue, but instead use pretty syntax colors
 set fillchars=fold:\ "Don't append hyphens - at the end of folds, use spaces
 hi Folded ctermbg=none "Folds respect terminal transparency
 set foldmethod=indent
-set foldlevel=20
+set foldlevel=20 "Don't close all folds immediately
+:nnoremap <silent> <leader>z :let&l:fdl=indent('.')/&sw<cr> "\z will close all folds at current level
 
 autocmd BufWritePre * :call Preserve("%s/\\s\\+$//e") "Delete trailing whitespace on write
 function! Preserve(command)
