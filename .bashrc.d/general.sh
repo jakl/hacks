@@ -62,7 +62,7 @@ get_box() {
 }
 
 #make the input line in the terminal only show the deepest dir and git info
-PS1="\$(whoami)@\$(get_box):\$(get_dir) \$(git_remote_name)\$(git_branch)$ "
+PS1="\$(whoami)@\$(get_box):\$(get_dir) \$(git_repo)\$(git_branch)$ "
 
 HISTSIZE=100000
 HISTFILESIZE=100000
