@@ -45,7 +45,6 @@ set fillchars=fold:\ "Don't append hyphens - at the end of folds, use spaces
 hi Folded ctermbg=none "Folds respect terminal transparency
 set foldmethod=indent
 set foldlevel=20 "Don't close all folds immediately
-:nnoremap <silent> <leader>z :let&l:fdl=indent('.')/&sw<cr> "\z will close all folds at current level
 
 autocmd BufWritePre * :call Preserve("%s/\\s\\+$//e") "Delete trailing whitespace on write
 function! Preserve(command)
@@ -63,7 +62,7 @@ endfunction
 inoremap <TAB> <C-P>
 
 "r replaces visual selection with yank's buffer
-vmap r "_dP
+vmap <silent> r "_dP
 
 "Use ctrl+h,j,k,l to move among split buffers
 nmap <silent> <C-k> :wincmd k<CR>
@@ -76,8 +75,10 @@ nmap <silent> <C-n> :bp<CR>
 nmap <silent> <C-m> :bn<CR>
 
 "Backslash t to open tagbar, and backslash n to open NerdTree
-map <leader>t :TagbarToggle<CR>
-map <leader>n :NERDTreeToggle<CR>
+map <silent> <leader>t :TagbarToggle<CR>
+map <silent> <leader>n :NERDTreeToggle<CR>
+
+map <silent> <leader>z :let&l:fdl=indent('.')/&sw<cr> "\z will close all folds at current level
 
 "j and k move inside wrapped lines as well
 nnoremap j gj
