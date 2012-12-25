@@ -48,11 +48,8 @@ if [ -f ~/.my_aliases ]; then
 fi
 
 GIT_PS1_SHOWDIRTYSTATE=1
-git_branch() {
-  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\ \1/'
-}
-git_repo() {
-  git remote -v 2> /dev/null | head -n1 | cut -f1 -d' ' | sed 's/.*\///' | sed 's/\.git//'
+parse_git_branch() {
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\ (\1)/'
 }
 get_dir() {
   pwd | sed -e 's/.*\///'
@@ -62,7 +59,7 @@ get_box() {
 }
 
 #make the input line in the terminal only show the deepest dir and git info
-PS1="\$(whoami)@\$(get_box):\$(get_dir) \$(git_repo)\$(git_branch)$ "
+PS1="\$(whoami)@\$(get_box):\$(get_dir)\$(parse_git_branch)$ "
 
 HISTSIZE=100000
 HISTFILESIZE=100000
