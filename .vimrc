@@ -45,6 +45,7 @@ set fillchars=fold:\ "Don't append hyphens - at the end of folds, use spaces
 hi Folded ctermbg=none "Folds respect terminal transparency
 set foldmethod=indent
 set foldlevel=20 "Don't close all folds immediately
+set backspace=indent,eol,start
 
 autocmd BufWritePre * :call Preserve("%s/\\s\\+$//e") "Delete trailing whitespace on write
 function! Preserve(command)
