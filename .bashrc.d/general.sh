@@ -24,7 +24,7 @@ alias gds='git diff --staged --color -w'
 alias gd='git diff --color -w'
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit --date=relative --first-parent'
 alias glm='gl --author=koval'
-alias gph='git push origin head'
+alias gph='git push origin HEAD'
 alias gsh='git show --date=relative --color'
 alias flushdns="dscacheutil -flushcache"
 alias avg="awk '{a=a+\$1}END{print a/NR}';"
