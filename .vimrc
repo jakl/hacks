@@ -86,6 +86,7 @@ nnoremap k gk
 
 "ctrl+c in visual mode will copy to mac system buffer
 vmap <C-c> y:call system("pbcopy", getreg("\""))<CR>
+set clipboard=unnamedplus "system buffer is used for copy/yank and paste/put
 
 " Search for selected text with *
 vnoremap <silent> * :<C-U>
