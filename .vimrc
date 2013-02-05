@@ -1,7 +1,8 @@
+"Run these two commands from your home directory to make this vimrc work:
 "git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
 "mkdir ~/.vim/undodir
 
-"Must `apt-get install git` and run above clone! These Bundle commands won't work otherwise.
+"Must `apt-get install git` and run above clone. These Bundle commands won't work otherwise.
 set rtp+=~/.vim/bundle/vundle
 call vundle#rc()
 Bundle 'gmarik/vundle'
@@ -15,37 +16,39 @@ Bundle 'wavded/vim-stylus'
 Bundle 'derekwyatt/vim-scala'
 Bundle 'depuracao/vim-rdoc'
 
-" .vim/undodir/  must exist
-set undodir=~/.vim/undodir "persistent undos between editing sessions
-set undofile "Doesn't work in ubuntu 10.04
+          " ~/.vim/undodir/      must exist
+set undodir=~/.vim/undodir     " persistent undos between editing sessions
+set undofile                   " Doesn't work in ubuntu 10.04
 
-set number "line numbers
-set tabstop=2 "spaces for a tab
-set shiftwidth=2 "spaces for indent
-set softtabstop=2 "backspace deletes spaces that filled for tab
-set expandtab "use spaces rather than tabs
-set smartindent "indents after {
-set autoindent "keep the current indent for new lines
-filetype off "Fix for syntax highlighting
-filetype plugin indent on "detect filetype, indent, load respective plugins
-syntax enable "Local scope syntax highlighting
-set ignorecase "ignore case searches
-set incsearch "search while typing
-set hlsearch  "highlight searches
-set pastetoggle=<F2> "f2 for paste mode, disabling indent
+set number                     " line numbers
+set tabstop=2                  " spaces for a tab
+set shiftwidth=2               " spaces for indent
+set softtabstop=2              " backspace deletes spaces that filled for tab
+set expandtab                  " use spaces rather than tabs
+set smartindent                " indents after {
+set autoindent                 " keep the current indent for new lines
+filetype off                   " Fix for syntax highlighting
+filetype plugin indent on      " detect filetype, indent, load respective plugins
+syntax enable                  " Local scope syntax highlighting
+set ignorecase                 " ignore case searches
+set incsearch                  " search while typing
+set hlsearch                   " highlight searches
+set pastetoggle=<F2>           " f2 for paste mode, disabling indent
 nmap <F3> :set invnumber<CR>
-set mouse=a "mouse compatability
-set autoread "reload changed files when unedited
-set linebreak "wrap lines at natural word dividers
-set title "set terminal title to file name
-set nowrapscan "don't wrap back to top searches
-set nowrap "don't wrap long lines of text. ':set wrap' to reenable
-colorscheme elflord "no dark blue, but instead use pretty syntax colors
-set fillchars=fold:\ "Don't append hyphens - at the end of folds, use spaces
-hi Folded ctermbg=none "Folds respect terminal transparency
-set foldmethod=indent
-set foldlevel=20 "Don't close all folds immediately
-set backspace=indent,eol,start
+set mouse=a                    " mouse compatability
+set autoread                   " reload changed files when unedited
+set linebreak                  " wrap lines at natural word dividers
+set title                      " set terminal title to file name
+set nowrapscan                 " don't wrap back to top searches
+set nowrap                     " don't wrap long lines of text. ':set wrap' to reenable
+colorscheme elflord            " no dark blue, but instead use pretty syntax colors
+set fillchars=fold:\           " Don't append hyphens - at the end of folds, use spaces
+hi Folded ctermbg=none         " Folds respect terminal transparency
+set foldmethod=indent          " Autocreate folds based on indentation, use zc and zo to fold/unfold
+set foldlevel=20               " Don't close all folds immediately
+set backspace=indent,eol,start " Always allow backspace
+set wildmenu                   " Use nice tab autocomplete when opening new files
+set wildmode=list:longest      " with :sp or :vs for horizontal and vertical splits
 
 autocmd BufWritePre * :call Preserve("%s/\\s\\+$//e") "Delete trailing whitespace on write
 function! Preserve(command)
