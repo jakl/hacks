@@ -65,7 +65,7 @@ HISTSIZE=100000
 HISTFILESIZE=100000
 
 tunnel () {
-  if [ $# = 3 ]; then
+  if [ $# = 4 ]; then
     LOCAL_PORT=$1
     HOST_NAME=$2
     REMOTE_PORT=$3
