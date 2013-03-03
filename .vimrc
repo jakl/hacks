@@ -15,6 +15,7 @@ Bundle 'digitaltoad/vim-jade'
 Bundle 'wavded/vim-stylus'
 Bundle 'derekwyatt/vim-scala'
 Bundle 'depuracao/vim-rdoc'
+Bundle 'pangloss/vim-javascript'
 
           " ~/.vim/undodir/      must exist
 set undodir=~/.vim/undodir     " persistent undos between editing sessions
