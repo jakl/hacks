@@ -10,7 +10,7 @@ alias v='vi'
 alias c='cd'
 alias l='ls'
 alias ls='ls -hF --group-directories-first --color=auto --sort=extension'
-alias la="ls -a | grep '^\.' | column"
+alias la='ls -a | grep '^\.' | column'
 alias ff='find . -type f -iname'
 alias acp='ack -i --perl'
 alias what='ps -e | grep -i'
@@ -20,14 +20,19 @@ alias g='gs'
 alias ga='git add'
 alias gc='git commit'
 alias gp='git pull --ff-only --all'
+alias gr='git fetch && git rebase origin/master'
+alias gf='git fetch'
 alias gds='git diff --staged --color -w'
 alias gd='git diff --color -w'
 alias gl='git log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit --date=relative'
 alias glm='gl --author=koval'
 alias gph='git push origin HEAD'
 alias gsh='git show --date=relative --color'
-alias flushdns="dscacheutil -flushcache"
+alias gch='git checkout'
+alias flushdns='dscacheutil -flushcache'
 alias avg="awk '{a=a+\$1}END{print a/NR}';"
+alias nr='repl.history'
+alias irc='irssi -n jakl -c irc.freenode.com'
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -60,6 +65,7 @@ get_box() {
 
 #make the input line in the terminal only show the deepest dir and git info
 PS1="\$(whoami)@\$(get_box):\$(get_dir)\$(parse_git_branch)$ "
+PS1="\[\033[G\]$PS1" # left align prompt, WARNING: will overwrite output that doesn't end in a newline
 
 HISTSIZE=100000
 HISTFILESIZE=100000

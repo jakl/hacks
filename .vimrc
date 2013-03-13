@@ -16,8 +16,9 @@ Bundle 'wavded/vim-stylus'
 Bundle 'derekwyatt/vim-scala'
 Bundle 'depuracao/vim-rdoc'
 Bundle 'pangloss/vim-javascript'
-Bundle 'vim-scripts/Rename'
 Bundle 'ervandew/supertab'
+Bundle 'danro/rename.vim'
+Bundle 'tpope/vim-fugitive'
 " TODO: Bundle 'shemerey/vim-project'
 
           " ~/.vim/undodir/      must exist
@@ -69,13 +70,14 @@ vmap <silent> r "_dP
 
 "Use ctrl+h,j,k,l to move among split buffers
 nmap <silent> <C-k> :wincmd k<CR>
+
 nmap <silent> <C-j> :wincmd j<CR>
 nmap <silent> <C-h> :wincmd h<CR>
 nmap <silent> <C-l> :wincmd l<CR>
 
-"ctrl+n/m to switch buffers
+"ctrl+n/p to switch buffers, same as irssi
 nmap <silent> <C-n> :bp<CR>
-nmap <silent> <C-m> :bn<CR>
+nmap <silent> <C-p> :bn<CR>
 
 "Backslash t to open tagbar, and backslash n to open NerdTree
 map <silent> <leader>t :TagbarToggle<CR>
@@ -87,9 +89,12 @@ map <silent> <leader>z :let&l:fdl=indent('.')/&sw<cr> "\z will close all folds a
 nnoremap j gj
 nnoremap k gk
 
+"Alternate esc characters
+imap jj <Esc>
+
 "ctrl+c in visual mode will copy to mac system buffer
 vmap <C-c> y:call system("pbcopy", getreg("\""))<CR>
-set clipboard=unnamedplus "system buffer is used for copy/yank and paste/put
+"set clipboard=unnamedplus "system buffer is used for copy/yank and paste/put
 
 " Search for selected text with *
 vnoremap <silent> * :<C-U>
