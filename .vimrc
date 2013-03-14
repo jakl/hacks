@@ -16,7 +16,6 @@ Bundle 'wavded/vim-stylus'
 Bundle 'derekwyatt/vim-scala'
 Bundle 'depuracao/vim-rdoc'
 Bundle 'pangloss/vim-javascript'
-Bundle 'ervandew/supertab'
 Bundle 'danro/rename.vim'
 Bundle 'tpope/vim-fugitive'
 " TODO: Bundle 'shemerey/vim-project'
@@ -64,6 +63,10 @@ function! Preserve(command)
     let @/=_s
     call cursor(l, c)
 endfunction
+
+"complete current word with tab, looking upwards for matches
+"use ctrl+v tab if you need an actual tab
+inoremap <TAB> <C-P>
 
 "r replaces visual selection with yank's buffer
 vmap <silent> r "_dP
