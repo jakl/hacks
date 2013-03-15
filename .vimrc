@@ -18,6 +18,7 @@ Bundle 'depuracao/vim-rdoc'
 Bundle 'pangloss/vim-javascript'
 Bundle 'danro/rename.vim'
 Bundle 'tpope/vim-fugitive'
+Bundle 'othree/xml.vim'
 " TODO: Bundle 'shemerey/vim-project'
 
           " ~/.vim/undodir/      must exist
