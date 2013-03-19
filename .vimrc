@@ -9,16 +9,12 @@ Bundle 'gmarik/vundle'
 Bundle 'kchmck/vim-coffee-script'
 Bundle 'scrooloose/nerdtree'
 Bundle 'fholgado/minibufexpl.vim'
-Bundle 'majutsushi/tagbar'
 Bundle 'juvenn/mustache'
 Bundle 'digitaltoad/vim-jade'
 Bundle 'wavded/vim-stylus'
 Bundle 'derekwyatt/vim-scala'
-Bundle 'depuracao/vim-rdoc'
 Bundle 'pangloss/vim-javascript'
 Bundle 'danro/rename.vim'
-Bundle 'tpope/vim-fugitive'
-Bundle 'othree/xml.vim'
 " TODO: Bundle 'shemerey/vim-project'
 
           " ~/.vim/undodir/      must exist
@@ -83,8 +79,7 @@ nmap <silent> <C-l> :wincmd l<CR>
 nmap <silent> <C-n> :bp<CR>
 nmap <silent> <C-p> :bn<CR>
 
-"Backslash t to open tagbar, and backslash n to open NerdTree
-map <silent> <leader>t :TagbarToggle<CR>
+"Backslash n to open NerdTree
 map <silent> <leader>n :NERDTreeToggle<CR>
 
 map <silent> <leader>z :let&l:fdl=indent('.')/&sw<cr> "\z will close all folds at current level
