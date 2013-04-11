@@ -15,7 +15,7 @@ Bundle 'wavded/vim-stylus'
 Bundle 'derekwyatt/vim-scala'
 Bundle 'pangloss/vim-javascript'
 Bundle 'danro/rename.vim'
-" TODO: Bundle 'shemerey/vim-project'
+Bundle 'tpope/vim-surround'
 
           " ~/.vim/undodir/      must exist
 set undodir=~/.vim/undodir     " persistent undos between editing sessions
