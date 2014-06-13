@@ -10,7 +10,7 @@
 window.onload = function(){
   comment = document.querySelector('#comment')
   if(comment) comment.onkeydown = function(e){
-    if(e.keyCode == 13 &amp;&amp; (e.metaKey || e.ctrlKey))
+    if(e.keyCode == 13 && (e.metaKey || e.ctrlKey))
       document.querySelector('#issue-comment-add-submit').click()
   }
 }
